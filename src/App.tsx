@@ -1,0 +1,51 @@
+import { FontSizeControl } from './components/FontSizeControl'
+import { Logo } from './components/Logo'
+import { APP_CONFIG } from './config/app'
+import { Done } from './pages/Done'
+import { Home } from './pages/Home'
+import { Review } from './pages/Review'
+import { Wizard } from './pages/Wizard'
+import { useForm } from './state/FormContext'
+
+function CurrentPage() {
+  const { page } = useForm()
+
+  switch (page.name) {
+    case 'home':
+      return <Home />
+    case 'wizard':
+      return <Wizard step={page.step} />
+    case 'review':
+      return <Review />
+    case 'done':
+      return <Done />
+  }
+}
+
+export function App() {
+  const { page, goHome } = useForm()
+
+  return (
+    <>
+      <header className="mx-auto flex max-w-2xl items-center justify-between px-5 pt-4">
+        {page.name === 'home' ? (
+          <span />
+        ) : (
+          <button
+            type="button"
+            className="flex items-center gap-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-600/40"
+            onClick={goHome}
+            aria-label="กลับหน้าแรก พิใจธรรม"
+          >
+            <Logo size={34} />
+            <span className="text-lg font-bold text-tea-700">
+              {APP_CONFIG.name}
+            </span>
+          </button>
+        )}
+        <FontSizeControl />
+      </header>
+      <CurrentPage />
+    </>
+  )
+}

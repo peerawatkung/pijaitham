@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+/* ฟอนต์ Sarabun self-host จาก /public/fonts — ไม่โหลดจาก CDN ตอน runtime
+   ไฟล์เดียวกันนี้จะถูกฝังลง PDF ใน M2 */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Sarabun-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Sarabun-Bold.ttf') format('truetype');
+}
+
+/* Design tokens — โทนธรรมชาติเวลาเช้า: เขียวใบชาอ่อน / ฟ้าหม่นก่อนรุ่ง / ครีมกระดาษสา
+   ตัดด้วยสีเข้มหนึ่งสี (ink) สำหรับข้อความ */
+@theme {
+  --font-sans: 'Sarabun', ui-sans-serif, system-ui, sans-serif;
+
+  /* พื้นหลังหลัก: ครีมกระดาษสา */
+  --color-paper: #faf8f1;
+  /* พื้นผิว card อ่อนกว่าพื้นหลังเล็กน้อย */
+  --color-card: #fffdf8;
+
+  /* เขียวใบชาอ่อน — สีหลักของแอป */
+  --color-tea-100: #eaf0e6;
+  --color-tea-200: #d5e0cf;
+  --color-tea-600: #5f7d61;
+  --color-tea-700: #4c674f;
+
+  /* ฟ้าหม่นก่อนรุ่ง — สีรองสำหรับกล่องข้อมูล */
+  --color-dawn-100: #e2e9ee;
+  --color-dawn-600: #5f7d92;
+
+  /* สีข้อความเข้มหนึ่งสี */
+  --color-ink: #2e3a33;
+  --color-ink-soft: #5a675f;
+}
+
+/* ผู้ใช้สูงวัยเยอะ — ตัวอักษรเริ่มต้นใหญ่กว่าปกติเล็กน้อย */
+html {
+  font-size: 17px;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* เคารพ prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

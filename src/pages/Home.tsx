@@ -1,0 +1,245 @@
+import { useRef, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import { APP_CONFIG } from '../config/app'
+import { DraftError, readDraftFile } from '../lib/draft'
+import { useForm } from '../state/FormContext'
+
+const WHY_CARDS = [
+  {
+    title: 'บอกแทนคุณ ในวันที่คุณบอกเองไม่ได้',
+    body: 'หากถึงวันที่คุณสื่อสารไม่ได้ เอกสารนี้จะพูดแทนใจคุณกับแพทย์และครอบครัว ว่าคุณต้องการหรือไม่ต้องการการรักษาแบบใดในวาระสุดท้าย',
+  },
+  {
+    title: 'ปลดภาระให้คนที่คุณรัก',
+    body: 'ครอบครัวไม่ต้องเดาใจ และไม่ต้องแบกการตัดสินใจที่ยากที่สุดไว้เพียงลำพัง เพราะคุณได้บอกความตั้งใจไว้ล่วงหน้าแล้ว',
+  },
+  {
+    title: 'เป็นสิทธิตามกฎหมายไทย',
+    body: 'หนังสือแสดงเจตนาเป็นสิทธิตามมาตรา 12 พ.ร.บ.สุขภาพแห่งชาติ พ.ศ. 2550 เมื่อลงนามพร้อมพยานครบถ้วน',
+  },
+] as const
+
+const HOW_STEPS = [
+  'ค่อย ๆ ตอบคำถาม 7 ส่วน ใช้เวลาราว 15–30 นาที ทุกข้อข้ามได้ ไม่ต้องรีบ',
+  'ตรวจทานคำตอบ แล้วดาวน์โหลดเป็นไฟล์ PDF ภาษาไทยที่จัดหน้าพร้อมปริ้น',
+  'ปริ้น ลงนามพร้อมพยาน 2 คน แล้วบอกครอบครัวและแพทย์ว่าคุณทำเอกสารนี้ไว้',
+] as const
+
+export function Home() {
+  const { goToStep, loadAnswers } = useForm()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [importError, setImportError] = useState<string | null>(null)
+  const [blankBusy, setBlankBusy] = useState(false)
+  const [blankError, setBlankError] = useState<string | null>(null)
+
+  const handleBlankForm = async () => {
+    setBlankBusy(true)
+    setBlankError(null)
+    try {
+      // โหลด PDF engine เฉพาะเมื่อกดปุ่ม — ไม่ถ่วง bundle หลัก
+      const { downloadBlankPdf } = await import('../lib/pdf/generator')
+      await downloadBlankPdf()
+    } catch (err) {
+      console.error(err)
+      setBlankError('สร้างเอกสารไม่สำเร็จ กรุณาลองอีกครั้ง')
+    } finally {
+      setBlankBusy(false)
+    }
+  }
+
+  const handleDraftFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = '' // ให้เลือกไฟล์เดิมซ้ำได้หลังแก้ไข
+    if (!file) return
+    setImportError(null)
+    try {
+      const answers = await readDraftFile(file)
+      loadAnswers(answers)
+      goToStep(0)
+    } catch (err) {
+      setImportError(
+        err instanceof DraftError
+          ? err.message
+          : 'เปิดไฟล์ไม่สำเร็จ กรุณาลองอีกครั้ง',
+      )
+    }
+  }
+
+  return (
+    <main className="mx-auto max-w-2xl px-5 pb-14">
+      {/* ---- Hero ---- */}
+      <section className="flex flex-col items-center pt-4 text-center sm:pt-6">
+        <h1 className="sr-only">
+          {APP_CONFIG.name} ({APP_CONFIG.englishName}) — {APP_CONFIG.tagline}
+        </h1>
+        {/* โลโก้พื้นโปร่งใส (ประมวลผลจาก Logo_Pijaitham.png ต้นฉบับ) — กลืนกับพื้นเว็บทุกสี */}
+        <img
+          src={`${import.meta.env.BASE_URL}logo.png`}
+          alt=""
+          aria-hidden="true"
+          width={640}
+          height={640}
+          className="h-auto w-72 sm:w-80"
+        />
+        <p className="max-w-lg text-xl leading-relaxed text-ink">
+          พื้นที่เงียบ ๆ สำหรับทบทวนสิ่งที่ใจให้คุณค่า
+          และบอกความตั้งใจเรื่องการดูแลช่วงท้ายของชีวิต
+          ไว้ให้คนที่คุณรักไม่ต้องเดา
+        </p>
+        <p className="mt-5 inline-flex items-center gap-2.5 rounded-full border border-tea-200 bg-tea-100 px-5 py-2.5 text-base font-bold text-tea-700">
+          <svg
+            viewBox="0 0 24 24"
+            className="h-5 w-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="4" y="11" width="16" height="10" rx="2" />
+            <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+          </svg>
+          เว็บไซต์นี้ไม่มีการเก็บข้อมูลใด ๆ ของผู้ใช้ทั้งสิ้น
+        </p>
+      </section>
+
+      {/* ---- พิใจธรรมคืออะไร ---- */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-bold text-ink">
+          {APP_CONFIG.name}คืออะไร
+        </h2>
+        <p className="mt-3 text-lg leading-relaxed text-ink">
+          {APP_CONFIG.name}คือเครื่องมือช่วยเขียน
+          &ldquo;{APP_CONFIG.documentTitle}&rdquo; (Living Will)
+          — เอกสารที่บอกล่วงหน้าว่าในวาระสุดท้ายของชีวิต
+          คุณอยากได้รับการดูแลแบบไหน อะไรคือสิ่งที่คุณให้คุณค่า
+          ใครคือคนที่คุณไว้วางใจให้ตัดสินใจแทน
+          รวมถึงข้อความจากใจถึงคนที่คุณรัก
+          เราจะชวนคุณคิดทีละขั้นด้วยคำถามที่อ่อนโยน
+          แล้วเรียบเรียงทุกคำตอบเป็นเอกสารที่สวยงาม พร้อมปริ้นไปลงนามให้มีผลจริง
+        </p>
+      </section>
+
+      {/* ---- ทำไมจึงสำคัญ ---- */}
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold text-ink">ทำไมเอกสารนี้จึงมีความหมาย</h2>
+        <div className="mt-4 space-y-4">
+          {WHY_CARDS.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-xl border border-tea-200 bg-card p-5"
+            >
+              <h3 className="text-lg font-bold text-tea-700">{card.title}</h3>
+              <p className="mt-1 text-base leading-relaxed text-ink">
+                {card.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ---- ใช้งานอย่างไร ---- */}
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold text-ink">ใช้งานเป็น 3 ขั้นตอน</h2>
+        <ol className="mt-4 space-y-3">
+          {HOW_STEPS.map((step, i) => (
+            <li key={step} className="flex items-start gap-4">
+              <span
+                aria-hidden="true"
+                className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tea-100 text-lg font-bold text-tea-700"
+              >
+                {i + 1}
+              </span>
+              <span className="text-lg leading-relaxed text-ink">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* ---- คำมั่นเรื่องความเป็นส่วนตัว ---- */}
+      <section className="mt-10 rounded-xl border border-dawn-100 bg-dawn-100/40 p-5">
+        <h2 className="text-lg font-bold text-ink">
+          คำมั่นเรื่องความเป็นส่วนตัว
+        </h2>
+        <p className="mt-2 text-base font-bold leading-relaxed text-ink">
+          {APP_CONFIG.name}ไม่มีการเก็บข้อมูลใด ๆ ของผู้ใช้ทั้งสิ้น —
+          ทุกตัวอักษรที่คุณพิมพ์อยู่ในเครื่องของคุณเท่านั้น
+          และไม่มีใครเห็นนอกจากคุณ
+        </p>
+        <ul className="mt-2 list-disc space-y-1 pl-6 text-base leading-relaxed text-ink">
+          <li>ทุกอย่างเกิดขึ้นในเครื่องของคุณ — ไม่มีข้อมูลใดถูกส่งออกไปที่ใด</li>
+          <li>ไม่มีบัญชีผู้ใช้ ไม่มีการล็อกอิน ไม่มีการเก็บข้อมูลบนเซิร์ฟเวอร์</li>
+          <li>ปิดหน้านี้เมื่อไร ข้อมูลก็หายไปทันที เว้นแต่คุณบันทึกไฟล์เก็บไว้เอง</li>
+        </ul>
+      </section>
+
+      {/* ---- เริ่มใช้งาน: ปุ่มหลักเด่นตัวเดียว ---- */}
+      <section className="mt-10">
+        <button
+          type="button"
+          className="w-full rounded-xl bg-tea-700 px-8 py-5 text-2xl font-bold text-white shadow-sm transition-colors hover:bg-tea-600 focus:outline-none focus:ring-4 focus:ring-tea-600/40"
+          onClick={() => goToStep(0)}
+        >
+          เริ่มเขียนเจตนาของฉัน
+        </button>
+
+        <div className="mt-6 rounded-xl border border-tea-200 bg-card p-5">
+          <p className="text-base leading-relaxed text-ink">
+            ไม่สะดวกกรอกข้อมูลลงในเว็บ
+            ดาวน์โหลดแบบฟอร์มเปล่าไปปริ้น แล้วเขียนด้วยปากกาได้ทั้งฉบับ —
+            แบบฟอร์มเปล่าไม่มีข้อมูลใด ๆ ของคุณอยู่เลย
+          </p>
+          <button
+            type="button"
+            disabled={blankBusy}
+            className="mt-3 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30 disabled:cursor-wait disabled:opacity-60"
+            onClick={() => void handleBlankForm()}
+          >
+            {blankBusy ? 'กำลังสร้างเอกสาร...' : 'ดาวน์โหลดแบบฟอร์มเปล่า (PDF)'}
+          </button>
+          {blankError ? (
+            <p role="alert" className="mt-2 text-lg text-red-700">
+              {blankError}
+            </p>
+          ) : null}
+        </div>
+
+        {/* ---- ทำต่อจากครั้งก่อน (เดิมคือ "เปิดแบบร่างจากไฟล์") ---- */}
+        <div className="mt-6 rounded-xl border border-tea-200 bg-card p-5">
+          <p className="text-base leading-relaxed text-ink">
+            เคยทำค้างไว้ใช่ไหม ถ้าตอนนั้นกด &ldquo;บันทึกแบบร่างลงเครื่อง&rdquo;
+            ไว้ ให้เลือกไฟล์ที่บันทึกไว้ แล้วกลับมาทำต่อจากเดิมได้เลย
+          </p>
+          <button
+            type="button"
+            className="mt-3 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            เลือกไฟล์ที่บันทึกไว้ เพื่อทำต่อ
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,application/json"
+            className="hidden"
+            aria-label="เลือกไฟล์แบบร่างที่บันทึกไว้"
+            onChange={(e) => void handleDraftFile(e)}
+          />
+          {importError ? (
+            <p role="alert" className="mt-2 text-lg text-red-700">
+              {importError}
+            </p>
+          ) : null}
+        </div>
+      </section>
+
+      <footer className="mt-12 border-t border-tea-200 pt-5 text-center text-sm leading-relaxed text-ink-soft">
+        {APP_CONFIG.name} · {APP_CONFIG.englishName} — {APP_CONFIG.tagline}
+        <br />
+        เครื่องมือนี้ช่วยเรียบเรียงเจตนาเท่านั้น
+        ไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย
+      </footer>
+    </main>
+  )
+}
