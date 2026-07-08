@@ -454,13 +454,21 @@ export async function generatePdfBytes(
     size: 12,
     align: 'center',
     color: COLOR_SOFT,
-    spaceAfter: 56,
+    spaceAfter: 28,
   })
+  // เส้นประดับสั้นกลางหน้า คั่นชื่อเอกสารกับส่วนเจ้าของ
+  w.page.drawLine({
+    start: { x: (PAGE_WIDTH - 70) / 2, y: w.y },
+    end: { x: (PAGE_WIDTH + 70) / 2, y: w.y },
+    thickness: 1,
+    color: COLOR_LINE,
+  })
+  w.moveDown(42)
   w.paragraph(PDF_TEXT.cover.ofOwner, {
     size: 13,
     align: 'center',
     color: COLOR_SOFT,
-    spaceAfter: 4,
+    spaceAfter: ownerName ? 8 : 24, // เว้นที่เหนือเส้นให้พอเขียนชื่อด้วยมือ
   })
   if (ownerName) {
     w.paragraph(ownerName, {
@@ -490,9 +498,17 @@ export async function generatePdfBytes(
       color: COLOR_SOFT,
     })
   }
-  w.y = 130
+  // หมายเหตุท้ายหน้าปก — เส้นสั้นคั่นด้านบนให้ดูเรียบร้อย
+  w.y = 132
+  w.page.drawLine({
+    start: { x: (PAGE_WIDTH - 40) / 2, y: w.y },
+    end: { x: (PAGE_WIDTH + 40) / 2, y: w.y },
+    thickness: 0.8,
+    color: COLOR_LINE,
+  })
+  w.moveDown(16)
   w.paragraph(PDF_TEXT.cover.note, {
-    size: 9.5,
+    size: 9,
     align: 'center',
     color: COLOR_SOFT,
   })
