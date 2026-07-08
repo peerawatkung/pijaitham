@@ -11,7 +11,7 @@ interface LogoProps {
 export function Logo({ size = 96, className }: LogoProps) {
   return (
     <svg
-      viewBox="0 0 260 120"
+      viewBox="4 2 246 101"
       height={size}
       className={className}
       aria-hidden="true"
