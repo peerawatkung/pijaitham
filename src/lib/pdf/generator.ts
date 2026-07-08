@@ -402,6 +402,8 @@ export interface GeneratePdfOptions {
   createdAt?: Date
   /** แบบฟอร์มเปล่าสำหรับเขียนด้วยมือทั้งฉบับ — วันที่จัดทำเว้นเป็นเส้นให้เขียนด้วย */
   blankForm?: boolean
+  /** โลโก้ (PNG พื้นโปร่งใส) แสดงบนหน้าปก — เว้นได้ เอกสารยังสมบูรณ์ */
+  logoPng?: ArrayBuffer
 }
 
 /**
@@ -430,7 +432,17 @@ export async function generatePdfBytes(
   const w = new PdfWriter(doc, regular, bold)
 
   // ---- หน้าปก ----
-  w.y = PAGE_HEIGHT - 250
+  if (opts.logoPng) {
+    const logoImage = await doc.embedPng(opts.logoPng)
+    const logoSize = 175
+    w.page.drawImage(logoImage, {
+      x: (PAGE_WIDTH - logoSize) / 2,
+      y: PAGE_HEIGHT - 85 - logoSize,
+      width: logoSize,
+      height: logoSize,
+    })
+  }
+  w.y = PAGE_HEIGHT - 300
   w.paragraph(APP_CONFIG.documentTitle, {
     size: 21,
     bold: true,
@@ -634,6 +646,20 @@ export async function generatePdfBytes(
 // ---- ส่วนที่ใช้ browser API (แยกจาก generatePdfBytes เพื่อให้ทดสอบง่าย) ----
 
 let cachedFontBytes: FontBytes | null = null
+let cachedLogoBytes: ArrayBuffer | null = null
+
+/** โหลดโลโก้สำหรับหน้าปก — โหลดไม่ได้ก็สร้างเอกสารต่อ (โลโก้เป็นส่วนตกแต่ง) */
+async function loadLogoBytes(): Promise<ArrayBuffer | undefined> {
+  if (cachedLogoBytes) return cachedLogoBytes
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL}logo.png`)
+    if (!res.ok) return undefined
+    cachedLogoBytes = await res.arrayBuffer()
+    return cachedLogoBytes
+  } catch {
+    return undefined
+  }
+}
 
 /** โหลดฟอนต์จาก /public/fonts ที่ bundle มากับแอป — ไม่มีการเรียก CDN */
 async function loadFontBytes(): Promise<FontBytes> {
@@ -661,8 +687,11 @@ export function buildFileName(
 
 /** สร้างและดาวน์โหลด PDF ในเบราว์เซอร์ */
 export async function downloadPdf(answers: FormAnswers): Promise<void> {
-  const fontBytes = await loadFontBytes()
-  const bytes = await generatePdfBytes(answers, fontBytes)
+  const [fontBytes, logoPng] = await Promise.all([
+    loadFontBytes(),
+    loadLogoBytes(),
+  ])
+  const bytes = await generatePdfBytes(answers, fontBytes, { logoPng })
   const blob = new Blob([bytes], { type: 'application/pdf' })
   downloadBlob(blob, buildFileName(answers))
 }
@@ -672,8 +701,14 @@ export async function downloadPdf(answers: FormAnswers): Promise<void> {
  * สำหรับผู้ที่ไม่สะดวกกรอกข้อมูลลงในเว็บ
  */
 export async function downloadBlankPdf(): Promise<void> {
-  const fontBytes = await loadFontBytes()
-  const bytes = await generatePdfBytes({}, fontBytes, { blankForm: true })
+  const [fontBytes, logoPng] = await Promise.all([
+    loadFontBytes(),
+    loadLogoBytes(),
+  ])
+  const bytes = await generatePdfBytes({}, fontBytes, {
+    blankForm: true,
+    logoPng,
+  })
   const blob = new Blob([bytes], { type: 'application/pdf' })
   downloadBlob(blob, `${APP_CONFIG.fileSlug}-แบบฟอร์มเปล่า-${ymd()}.pdf`)
 }
