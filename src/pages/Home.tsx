@@ -239,6 +239,16 @@ export function Home() {
         <br />
         เครื่องมือนี้ช่วยเรียบเรียงเจตนาเท่านั้น
         ไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย
+        <br />
+        โค้ดของเว็บนี้เปิดเผยทั้งหมด —{' '}
+        <a
+          href="https://github.com/peerawatkung/pijaitham"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-4 hover:text-ink"
+        >
+          ตรวจสอบได้ว่าไม่มีการเก็บข้อมูลจริง ๆ
+        </a>
       </footer>
     </main>
   )
