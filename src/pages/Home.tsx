@@ -26,11 +26,28 @@ const HOW_STEPS = [
 ] as const
 
 export function Home() {
-  const { goToStep, loadAnswers } = useForm()
+  const { goToStep, goToFaq, loadAnswers } = useForm()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const [blankBusy, setBlankBusy] = useState(false)
   const [blankError, setBlankError] = useState<string | null>(null)
+  const [sampleBusy, setSampleBusy] = useState(false)
+  const [sampleError, setSampleError] = useState<string | null>(null)
+
+  const handleSample = async () => {
+    setSampleBusy(true)
+    setSampleError(null)
+    try {
+      const { openSamplePdf } = await import('../lib/pdf/generator')
+      await openSamplePdf()
+    } catch (err) {
+      console.error(err)
+      const { downloadErrorMessage } = await import('../lib/browser')
+      setSampleError(downloadErrorMessage())
+    } finally {
+      setSampleBusy(false)
+    }
+  }
 
   const handleBlankForm = async () => {
     setBlankBusy(true)
@@ -122,6 +139,21 @@ export function Home() {
           เราจะชวนคุณคิดทีละขั้นด้วยคำถามที่อ่อนโยน
           แล้วเรียบเรียงทุกคำตอบเป็นเอกสารที่สวยงาม พร้อมปริ้นไปลงนามให้มีผลจริง
         </p>
+        <button
+          type="button"
+          disabled={sampleBusy}
+          className="mt-4 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30 disabled:cursor-wait disabled:opacity-60"
+          onClick={() => void handleSample()}
+        >
+          {sampleBusy
+            ? 'กำลังสร้างตัวอย่าง...'
+            : 'ดูตัวอย่างเอกสารที่เสร็จแล้ว (PDF)'}
+        </button>
+        {sampleError ? (
+          <p role="alert" className="mt-2 text-lg text-red-700">
+            {sampleError}
+          </p>
+        ) : null}
       </section>
 
       {/* ---- ทำไมจึงสำคัญ ---- */}
@@ -158,6 +190,21 @@ export function Home() {
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* ---- คำถามพบบ่อย ---- */}
+      <section className="mt-10 flex flex-col items-start justify-between gap-3 rounded-xl border border-tea-200 bg-card p-5 sm:flex-row sm:items-center">
+        <p className="text-base leading-relaxed text-ink">
+          มีข้อสงสัย? เรารวมคำตอบเรื่องผลทางกฎหมาย การใช้งาน
+          และความเป็นส่วนตัวไว้ให้แล้ว
+        </p>
+        <button
+          type="button"
+          className="shrink-0 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
+          onClick={goToFaq}
+        >
+          อ่านคำถามพบบ่อย
+        </button>
       </section>
 
       {/* ---- คำมั่นเรื่องความเป็นส่วนตัว ---- */}
@@ -243,7 +290,14 @@ export function Home() {
         เครื่องมือนี้ช่วยเรียบเรียงเจตนาเท่านั้น
         ไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย
         <br />
-        โค้ดของเว็บนี้เปิดเผยทั้งหมด —{' '}
+        <button
+          type="button"
+          className="underline underline-offset-4 hover:text-ink"
+          onClick={goToFaq}
+        >
+          คำถามพบบ่อย
+        </button>{' '}
+        · โค้ดของเว็บนี้เปิดเผยทั้งหมด —{' '}
         <a
           href="https://github.com/peerawatkung/pijaitham"
           target="_blank"

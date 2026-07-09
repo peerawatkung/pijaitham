@@ -3,6 +3,7 @@ import { InAppBrowserNotice } from './components/InAppBrowserNotice'
 import { Logo } from './components/Logo'
 import { APP_CONFIG } from './config/app'
 import { Done } from './pages/Done'
+import { Faq } from './pages/Faq'
 import { Home } from './pages/Home'
 import { Review } from './pages/Review'
 import { Wizard } from './pages/Wizard'
@@ -20,6 +21,8 @@ function CurrentPage() {
       return <Review />
     case 'done':
       return <Done />
+    case 'faq':
+      return <Faq />
   }
 }
 

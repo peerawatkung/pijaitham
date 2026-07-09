@@ -768,6 +768,27 @@ export async function downloadPdf(answers: FormAnswers): Promise<void> {
 }
 
 /**
+ * เปิดตัวอย่างเอกสารที่กรอกเสร็จแล้ว (ข้อมูลสมมติ) ในแท็บใหม่
+ * ถ้าเบราว์เซอร์บล็อกการเปิดแท็บ ให้ส่งไฟล์ผ่านดาวน์โหลด/แชร์แทน
+ */
+export async function openSamplePdf(): Promise<void> {
+  const [fontBytes, logoPng] = await Promise.all([
+    loadFontBytes(),
+    loadLogoBytes(),
+  ])
+  const { SAMPLE_ANSWERS } = await import('../../content/sampleAnswers')
+  const bytes = await generatePdfBytes(SAMPLE_ANSWERS, fontBytes, { logoPng })
+  const blob = new Blob([bytes], { type: 'application/pdf' })
+  const url = URL.createObjectURL(blob)
+  const win = window.open(url, '_blank')
+  if (!win) {
+    await shareOrDownload(blob, `${APP_CONFIG.fileSlug}-ตัวอย่าง-${ymd()}.pdf`)
+  }
+  // แท็บใหม่ยังใช้ URL อยู่ — รอสักพักก่อนคืนหน่วยความจำ
+  setTimeout(() => URL.revokeObjectURL(url), 60_000)
+}
+
+/**
  * ดาวน์โหลดแบบฟอร์มเปล่า — ไม่มีข้อมูลใด ๆ ทุกช่องเว้นให้เขียนด้วยปากกาทั้งฉบับ
  * สำหรับผู้ที่ไม่สะดวกกรอกข้อมูลลงในเว็บ
  */
