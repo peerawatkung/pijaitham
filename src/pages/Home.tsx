@@ -316,44 +316,48 @@ export function Home() {
         </div>
       </section>
 
-      <footer className="mt-12 border-t border-tea-200 pt-5 text-center text-sm leading-relaxed text-ink-soft">
-        {APP_CONFIG.name} · {APP_CONFIG.englishName} — {APP_CONFIG.tagline}
-        <br />
-        เครื่องมือนี้ช่วยเรียบเรียงเจตนาเท่านั้น
-        ไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย
-        <br />
-        <button
-          type="button"
-          className="underline underline-offset-4 hover:text-ink"
-          onClick={goToAbout}
+      <footer className="mt-12 border-t border-tea-200 pt-6 text-center">
+        <nav
+          aria-label="ลิงก์เพิ่มเติม"
+          className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 text-base text-ink"
         >
-          ทำไมต้องมีพิใจธรรม
-        </button>{' '}
-        ·{' '}
-        <button
-          type="button"
-          className="underline underline-offset-4 hover:text-ink"
-          onClick={goToFaq}
-        >
-          คำถามพบบ่อย
-        </button>{' '}
-        ·{' '}
-        <button
-          type="button"
-          className="underline underline-offset-4 hover:text-ink"
-          onClick={goToTalkGuide}
-        >
-          คู่มือชวนครอบครัวคุย
-        </button>{' '}
-        · โค้ดของเว็บนี้เปิดเผยทั้งหมด —{' '}
-        <a
-          href="https://github.com/peerawatkung/pijaitham"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-4 hover:text-ink"
-        >
-          ตรวจสอบได้ว่าไม่มีการเก็บข้อมูลจริง ๆ
-        </a>
+          <button
+            type="button"
+            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            onClick={goToAbout}
+          >
+            ทำไมต้องมีพิใจธรรม
+          </button>
+          <button
+            type="button"
+            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            onClick={goToFaq}
+          >
+            คำถามพบบ่อย
+          </button>
+          <button
+            type="button"
+            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            onClick={goToTalkGuide}
+          >
+            คู่มือชวนครอบครัวคุย
+          </button>
+          <a
+            href="https://github.com/peerawatkung/pijaitham"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+          >
+            โค้ดเปิดเผยทั้งหมด (GitHub)
+          </a>
+        </nav>
+        <p className="mt-6 text-sm leading-relaxed text-ink-soft">
+          {APP_CONFIG.name} · {APP_CONFIG.englishName} — {APP_CONFIG.tagline}
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-ink-soft">
+          เครื่องมือนี้ช่วยเรียบเรียงเจตนาเท่านั้น
+          ไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย
+        </p>
       </footer>
     </main>
   )
