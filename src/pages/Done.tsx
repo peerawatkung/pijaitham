@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { PDF_TEXT } from '../content/pdfText'
 import { usePdfDownload } from '../hooks/usePdfDownload'
 import { exportDraft } from '../lib/draft'
+import { downloadReviewReminder } from '../lib/reviewReminder'
 import { useForm } from '../state/FormContext'
 
 /** หน้า "ขั้นตอนถัดไป" — แสดงหลังดาวน์โหลด PDF สำเร็จ */
@@ -70,6 +71,17 @@ export function Done() {
         >
           ดาวน์โหลดแบบร่าง (.json) ไว้แก้ไขภายหลัง
         </button>
+        <button
+          type="button"
+          className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
+          onClick={() => void downloadReviewReminder()}
+        >
+          เพิ่มการเตือนทบทวนในปฏิทิน (ปีละครั้ง)
+        </button>
+        <p className="text-center text-sm leading-relaxed text-ink-soft">
+          ได้ไฟล์ปฏิทิน (.ics) เปิดแล้วเพิ่มลง Google Calendar หรือปฏิทินมือถือได้ทันที
+          — จะเตือนให้กลับมาทบทวนเอกสารทุกปี โดยไม่มีการเชื่อมต่อบัญชีใด ๆ
+        </p>
         <div className="flex justify-center gap-8 pt-4">
           <button
             type="button"

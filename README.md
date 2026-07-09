@@ -43,3 +43,8 @@ npx wrangler pages deploy dist --project-name=acp-booklet --commit-dirty=true
 ```
 
 โดเมน: pijaitham.com (+ www) ชี้ CNAME → `acp-booklet.pages.dev`
+
+## License
+
+โอเพนซอร์สภายใต้ [MIT License](LICENSE) — นำไปใช้ ปรับแต่ง หรือต่อยอดได้อย่างอิสระ
+เช่น โรงพยาบาล มูลนิธิ หรือหน่วยงานที่อยากนำไปให้บริการประชาชน
