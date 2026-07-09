@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { ShareButton } from '../components/ShareButton'
 import { PDF_TEXT } from '../content/pdfText'
 import { usePdfDownload } from '../hooks/usePdfDownload'
 import { exportDraft } from '../lib/draft'
@@ -82,6 +83,18 @@ export function Done() {
           ได้ไฟล์ปฏิทิน (.ics) เปิดแล้วเพิ่มลง Google Calendar หรือปฏิทินมือถือได้ทันที
           — จะเตือนให้กลับมาทบทวนเอกสารทุกปี โดยไม่มีการเชื่อมต่อบัญชีใด ๆ
         </p>
+
+        {/* ---- ชวนบอกต่อ — จังหวะที่เพิ่งทำเสร็จคือตอนที่อยากชวนคนอื่นที่สุด ---- */}
+        <div className="mt-8 rounded-xl border border-tea-200 bg-tea-100/60 p-6 text-center">
+          <p className="text-lg leading-relaxed text-ink">
+            การวางแผนแบบนี้มีความหมายกับทุกครอบครัว
+            <br />
+            ชวนคนที่คุณรักมาเขียนของเขาบ้างไหม
+          </p>
+          <div className="mt-4">
+            <ShareButton />
+          </div>
+        </div>
         <div className="flex justify-center gap-8 pt-4">
           <button
             type="button"

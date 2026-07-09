@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
+import { ShareButton } from '../components/ShareButton'
 import { APP_CONFIG } from '../config/app'
 import { DraftError, readDraftFile } from '../lib/draft'
 import { useForm } from '../state/FormContext'
@@ -270,6 +271,16 @@ export function Home() {
               {importError}
             </p>
           ) : null}
+        </div>
+      </section>
+
+      {/* ---- ชวนบอกต่อ ---- */}
+      <section className="mt-10 text-center">
+        <p className="text-lg leading-relaxed text-ink">
+          รู้จักใครที่เรื่องนี้มีความหมายกับเขา
+        </p>
+        <div className="mt-3">
+          <ShareButton />
         </div>
       </section>
 
