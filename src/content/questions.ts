@@ -92,8 +92,8 @@ export const SECTIONS: SectionDef[] = [
       {
         type: 'text',
         id: 'birthDate',
-        label: 'วัน/เดือน/ปีเกิด',
-        placeholder: 'เช่น 14 กุมภาพันธ์ 2498',
+        label: 'วัน/เดือน/ปีเกิด (พ.ศ.)',
+        placeholder: 'เช่น 14 กุมภาพันธ์ 2498 หรือ 14/02/2498',
         hiddenWhenChecked: 'handwritePersonal',
       },
       {
