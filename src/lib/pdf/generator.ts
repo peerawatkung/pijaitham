@@ -552,11 +552,13 @@ export async function generatePdfBytes(
         continue
       }
       // ไม่ได้ตอบ — เว้นว่างให้เขียนด้วยปากกา
+      // แบบฟอร์มเปล่าพิมพ์ hint ตัวเล็กใต้คำถาม ช่วยคนกรอกด้วยมือ
+      const showHint = opts.blankForm === true && Boolean(field.hint)
       // จองพื้นที่ทั้งบล็อกก่อนวาด กันคำถามกับช่องติ๊ก/เส้นเขียนถูกตัดข้ามหน้า
       const LABEL_H = 22
       const ROW_H = 23 // checkboxRow หนึ่งแถว
       const LINE_H = 35 // writeLine หนึ่งเส้น (รวมช่องว่างเหนือเส้น)
-      let blockHeight = LABEL_H
+      let blockHeight = LABEL_H + (showHint ? 32 : 0)
       switch (field.type) {
         case 'text':
           blockHeight += LINE_H
@@ -579,6 +581,14 @@ export async function generatePdfBytes(
       w.ensure(Math.min(blockHeight, 600))
 
       w.fieldLabel(field.label)
+      if (showHint && field.hint) {
+        w.paragraph(field.hint, {
+          size: 8.5,
+          color: COLOR_SOFT,
+          x: MARGIN_X + 14,
+          spaceAfter: 3,
+        })
+      }
       switch (field.type) {
         case 'text':
           w.writeLine()
