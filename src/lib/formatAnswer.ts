@@ -40,7 +40,9 @@ export function formatAnswer(
         .map((v) => field.options.find((o) => o.value === v)?.label)
         .filter((label): label is string => Boolean(label))
       if (answer.other) labels.push(`อื่น ๆ: ${answer.other}`)
-      return labels.length > 0 ? labels.join(' · ') : null
+      if (labels.length === 0) return null
+      // ข้อละบรรทัด อ่านง่ายทั้งบนจอมือถือและใน PDF
+      return labels.map((label) => `• ${label}`).join('\n')
     }
 
     case 'person': {
@@ -55,9 +57,8 @@ export function formatAnswer(
       if (person.facebook) contacts.push(`Facebook: ${person.facebook}`)
       if (person.email) contacts.push(`อีเมล: ${person.email}`)
       if (person.otherContact) contacts.push(`อื่น ๆ: ${person.otherContact}`)
-      const text = [who.join(' '), contacts.join(' · ')]
-        .filter(Boolean)
-        .join('\n')
+      // ช่องทางติดต่อบรรทัดละช่องทาง อ่านง่ายกว่าต่อกันเป็นพืด
+      const text = [who.join(' '), ...contacts].filter(Boolean).join('\n')
       return text || null
     }
 
