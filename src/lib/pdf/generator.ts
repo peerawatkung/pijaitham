@@ -659,16 +659,18 @@ export async function generatePdfBytes(
   w.signatureBlock(PDF_TEXT.signing.witness1Role, { withRelation: true })
   w.signatureBlock(PDF_TEXT.signing.witness2Role, { withRelation: true })
 
+  const proxy1 = getPerson(answers, 'proxy1')
+  const proxy2 = getPerson(answers, 'proxy2')
+  const proxyBlockCount = proxy2?.name ? 2 : 1
   w.moveDown(6)
-  w.ensure(180)
+  // จองพื้นที่ทั้งส่วนตามจำนวนบล็อกจริง — ไม่ให้บล็อกใดหลุดไปหน้าถัดไปตามลำพัง
+  w.ensure(60 + 115 * proxyBlockCount)
   w.subheading(PDF_TEXT.signing.proxyHeading)
   w.paragraph(PDF_TEXT.signing.proxyNote, {
     size: 9.5,
     color: COLOR_SOFT,
     spaceAfter: 10,
   })
-  const proxy1 = getPerson(answers, 'proxy1')
-  const proxy2 = getPerson(answers, 'proxy2')
   w.signatureBlock(PDF_TEXT.signing.proxyRole, {
     printedName: proxy1?.name || undefined,
   })
