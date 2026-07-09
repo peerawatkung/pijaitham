@@ -20,10 +20,12 @@ const WHY_CARDS = [
   },
 ] as const
 
+// ขั้นที่ 3–4 ให้สอดคล้องกับ "ขั้นตอนหลังพิมพ์เอกสาร" ในหน้า Done (pdfText.appendix.afterPrintSteps)
 const HOW_STEPS = [
   'ค่อย ๆ ตอบคำถาม 7 ส่วน ใช้เวลาราว 15–30 นาที ทุกข้อข้ามได้ ไม่ต้องรีบ',
   'ตรวจทานคำตอบ แล้วดาวน์โหลดเป็นไฟล์ PDF ภาษาไทยที่จัดหน้าพร้อมปริ้น',
-  'ปริ้น ลงนามพร้อมพยาน 2 คน แล้วบอกครอบครัวและแพทย์ว่าคุณทำเอกสารนี้ไว้',
+  'ปริ้น แล้วลงนามพร้อมพยาน 2 คน และบอกครอบครัวว่าคุณทำเอกสารนี้ไว้',
+  'มอบสำเนาให้ผู้ตัดสินใจแทนและโรงพยาบาลที่รักษาประจำ ส่วนต้นฉบับเก็บในที่ที่หาง่าย',
 ] as const
 
 export function Home() {
@@ -178,7 +180,7 @@ export function Home() {
 
       {/* ---- ใช้งานอย่างไร ---- */}
       <section className="mt-10">
-        <h2 className="text-2xl font-bold text-ink">ใช้งานเป็น 3 ขั้นตอน</h2>
+        <h2 className="text-2xl font-bold text-ink">ใช้งานเป็น 4 ขั้นตอน</h2>
         <ol className="mt-4 space-y-3">
           {HOW_STEPS.map((step, i) => (
             <li key={step} className="flex items-start gap-4">
