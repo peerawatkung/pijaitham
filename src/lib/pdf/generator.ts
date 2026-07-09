@@ -754,7 +754,10 @@ export function buildFileName(
   answers: FormAnswers,
   now: Date = new Date(),
 ): string {
-  const safe = safeFileSlug(getOwnerName(answers) ?? '')
+  // ติ๊ก "ปริ้นไปเขียนเอง" = ไม่เอาชื่อที่เคยพิมพ์ไว้ไปอยู่ในชื่อไฟล์ด้วย
+  const ownerName =
+    answers['handwritePersonal'] === true ? null : getOwnerName(answers)
+  const safe = safeFileSlug(ownerName ?? '')
   return `${APP_CONFIG.fileSlug}-${safe || 'เอกสาร'}-${ymd(now)}.pdf`
 }
 
