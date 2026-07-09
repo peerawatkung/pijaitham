@@ -328,6 +328,7 @@ export const SECTIONS: SectionDef[] = [
         type: 'choice',
         id: 'organDonation',
         label: 'การบริจาคอวัยวะ',
+        hint: 'หากประสงค์บริจาค ลงทะเบียนล่วงหน้าได้ที่ศูนย์รับบริจาคอวัยวะ สภากาชาดไทย — organdonate.redcross.or.th',
         options: [
           { value: 'wish', label: 'ประสงค์บริจาค' },
           { value: 'decline', label: 'ไม่ประสงค์' },
