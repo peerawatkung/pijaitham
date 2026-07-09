@@ -71,6 +71,7 @@ function validateValue(field: FieldDef, raw: unknown): AnswerValue | undefined {
         relation: str('relation'),
         phone: str('phone'),
         // ช่องทางติดต่อเพิ่มเมื่อ 2026-07-08 — draft เก่าไม่มี field เหล่านี้ ถือเป็นค่าว่าง
+        phone2: str('phone2'),
         lineId: str('lineId'),
         facebook: str('facebook'),
         email: str('email'),

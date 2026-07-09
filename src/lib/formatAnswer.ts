@@ -50,6 +50,7 @@ export function formatAnswer(
       if (person.relation) who.push(`(${person.relation})`)
       const contacts: string[] = []
       if (person.phone) contacts.push(`โทร ${person.phone}`)
+      if (person.phone2) contacts.push(`โทรสำรอง ${person.phone2}`)
       if (person.lineId) contacts.push(`LINE: ${person.lineId}`)
       if (person.facebook) contacts.push(`Facebook: ${person.facebook}`)
       if (person.email) contacts.push(`อีเมล: ${person.email}`)

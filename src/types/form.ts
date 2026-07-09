@@ -15,6 +15,7 @@ export interface PersonAnswer {
   name: string
   relation: string
   phone: string
+  phone2: string
   lineId: string
   facebook: string
   email: string
