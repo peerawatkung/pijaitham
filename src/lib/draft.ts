@@ -146,6 +146,6 @@ export function exportDraft(answers: FormAnswers): void {
     type: 'application/json',
   })
   const name = typeof answers['fullName'] === 'string' ? answers['fullName'] : ''
-  const fileName = `${APP_CONFIG.fileSlug}-draft-${safeFileSlug(name.trim()) || 'เอกสาร'}-${ymd()}.json`
+  const fileName = `${APP_CONFIG.fileSlug}-แบบร่าง-${safeFileSlug(name.trim()) || 'เอกสาร'}-${ymd()}.json`
   void shareOrDownload(blob, fileName)
 }
