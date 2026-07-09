@@ -443,7 +443,7 @@ export async function generatePdfBytes(
     })
   }
   w.y = PAGE_HEIGHT - 300
-  w.paragraph(APP_CONFIG.documentTitle, {
+  w.paragraph(PDF_TEXT.cover.titleLines, {
     size: 21,
     bold: true,
     align: 'center',
