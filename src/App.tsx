@@ -6,6 +6,7 @@ import { Done } from './pages/Done'
 import { Faq } from './pages/Faq'
 import { Home } from './pages/Home'
 import { Review } from './pages/Review'
+import { Sample } from './pages/Sample'
 import { Wizard } from './pages/Wizard'
 import { useForm } from './state/FormContext'
 
@@ -23,6 +24,8 @@ function CurrentPage() {
       return <Done />
     case 'faq':
       return <Faq />
+    case 'sample':
+      return <Sample />
   }
 }
 

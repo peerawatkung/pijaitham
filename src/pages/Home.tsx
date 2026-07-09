@@ -26,28 +26,11 @@ const HOW_STEPS = [
 ] as const
 
 export function Home() {
-  const { goToStep, goToFaq, loadAnswers } = useForm()
+  const { goToStep, goToFaq, goToSample, loadAnswers } = useForm()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const [blankBusy, setBlankBusy] = useState(false)
   const [blankError, setBlankError] = useState<string | null>(null)
-  const [sampleBusy, setSampleBusy] = useState(false)
-  const [sampleError, setSampleError] = useState<string | null>(null)
-
-  const handleSample = async () => {
-    setSampleBusy(true)
-    setSampleError(null)
-    try {
-      const { openSamplePdf } = await import('../lib/pdf/generator')
-      await openSamplePdf()
-    } catch (err) {
-      console.error(err)
-      const { downloadErrorMessage } = await import('../lib/browser')
-      setSampleError(downloadErrorMessage())
-    } finally {
-      setSampleBusy(false)
-    }
-  }
 
   const handleBlankForm = async () => {
     setBlankBusy(true)
@@ -141,19 +124,11 @@ export function Home() {
         </p>
         <button
           type="button"
-          disabled={sampleBusy}
-          className="mt-4 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30 disabled:cursor-wait disabled:opacity-60"
-          onClick={() => void handleSample()}
+          className="mt-4 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
+          onClick={goToSample}
         >
-          {sampleBusy
-            ? 'กำลังสร้างตัวอย่าง...'
-            : 'ดูตัวอย่างเอกสารที่เสร็จแล้ว (PDF)'}
+          ดูตัวอย่างเอกสารที่เสร็จแล้ว
         </button>
-        {sampleError ? (
-          <p role="alert" className="mt-2 text-lg text-red-700">
-            {sampleError}
-          </p>
-        ) : null}
       </section>
 
       {/* ---- ทำไมจึงสำคัญ ---- */}
