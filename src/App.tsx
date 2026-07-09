@@ -2,6 +2,7 @@ import { FontSizeControl } from './components/FontSizeControl'
 import { InAppBrowserNotice } from './components/InAppBrowserNotice'
 import { Logo } from './components/Logo'
 import { APP_CONFIG } from './config/app'
+import { About } from './pages/About'
 import { Done } from './pages/Done'
 import { Faq } from './pages/Faq'
 import { Home } from './pages/Home'
@@ -26,6 +27,8 @@ function CurrentPage() {
       return <Faq />
     case 'sample':
       return <Sample />
+    case 'about':
+      return <About />
   }
 }
 

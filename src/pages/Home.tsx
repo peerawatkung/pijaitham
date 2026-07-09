@@ -27,7 +27,7 @@ const HOW_STEPS = [
 ] as const
 
 export function Home() {
-  const { goToStep, goToFaq, goToSample, loadAnswers } = useForm()
+  const { goToStep, goToFaq, goToSample, goToAbout, loadAnswers } = useForm()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const [blankBusy, setBlankBusy] = useState(false)
@@ -157,6 +157,16 @@ export function Home() {
             </div>
           ))}
         </div>
+        <p className="mt-4 text-base leading-relaxed text-ink-soft">
+          พิใจธรรมเกิดจากเรื่องจริงของครอบครัวหนึ่ง —{' '}
+          <button
+            type="button"
+            className="underline underline-offset-4 hover:text-ink"
+            onClick={goToAbout}
+          >
+            อ่านเรื่องราวเบื้องหลัง
+          </button>
+        </p>
       </section>
 
       {/* ---- ใช้งานอย่างไร ---- */}
@@ -290,6 +300,14 @@ export function Home() {
         เครื่องมือนี้ช่วยเรียบเรียงเจตนาเท่านั้น
         ไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย
         <br />
+        <button
+          type="button"
+          className="underline underline-offset-4 hover:text-ink"
+          onClick={goToAbout}
+        >
+          ทำไมต้องมีพิใจธรรม
+        </button>{' '}
+        ·{' '}
         <button
           type="button"
           className="underline underline-offset-4 hover:text-ink"
