@@ -27,7 +27,14 @@ const HOW_STEPS = [
 ] as const
 
 export function Home() {
-  const { goToStep, goToFaq, goToSample, goToAbout, loadAnswers } = useForm()
+  const {
+    goToStep,
+    goToFaq,
+    goToSample,
+    goToAbout,
+    goToTalkGuide,
+    loadAnswers,
+  } = useForm()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const [blankBusy, setBlankBusy] = useState(false)
@@ -202,6 +209,21 @@ export function Home() {
         </button>
       </section>
 
+      {/* ---- คู่มือชวนครอบครัวคุย ---- */}
+      <section className="mt-4 flex flex-col items-start justify-between gap-3 rounded-xl border border-tea-200 bg-card p-5 sm:flex-row sm:items-center">
+        <p className="text-base leading-relaxed text-ink">
+          ไม่รู้จะเริ่มคุยกับพ่อแม่หรือครอบครัวยังไง?
+          เรามีคู่มือพร้อมประโยคเปิดบทสนทนาให้
+        </p>
+        <button
+          type="button"
+          className="shrink-0 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
+          onClick={goToTalkGuide}
+        >
+          อ่านคู่มือชวนคุย
+        </button>
+      </section>
+
       {/* ---- คำมั่นเรื่องความเป็นส่วนตัว ---- */}
       <section className="mt-10 rounded-xl border border-dawn-100 bg-dawn-100/40 p-5">
         <h2 className="text-lg font-bold text-ink">
@@ -314,6 +336,14 @@ export function Home() {
           onClick={goToFaq}
         >
           คำถามพบบ่อย
+        </button>{' '}
+        ·{' '}
+        <button
+          type="button"
+          className="underline underline-offset-4 hover:text-ink"
+          onClick={goToTalkGuide}
+        >
+          คู่มือชวนครอบครัวคุย
         </button>{' '}
         · โค้ดของเว็บนี้เปิดเผยทั้งหมด —{' '}
         <a

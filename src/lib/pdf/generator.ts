@@ -9,19 +9,19 @@ import { formatAnswer } from '../formatAnswer'
 import type { FormAnswers, PersonAnswer } from '../../types/form'
 
 // ---- ขนาดหน้าและระยะขอบ (หน่วย pt) — A4 พร้อมปริ้น ----
-const PAGE_WIDTH = 595.28
+export const PAGE_WIDTH = 595.28
 const PAGE_HEIGHT = 841.89
-const MARGIN_X = 56
+export const MARGIN_X = 56
 const MARGIN_TOP = 60
 const MARGIN_BOTTOM = 72
-const CONTENT_WIDTH = PAGE_WIDTH - MARGIN_X * 2
+export const CONTENT_WIDTH = PAGE_WIDTH - MARGIN_X * 2
 
 // อักษรไทยมีสระบน-ล่างและวรรณยุกต์ซ้อน ต้องเผื่อระยะบรรทัดมากกว่าละติน
 const LINE_SPACING = 1.65
 
-const COLOR_INK = rgb(0.13, 0.17, 0.15)
-const COLOR_SOFT = rgb(0.38, 0.43, 0.4)
-const COLOR_ACCENT = rgb(0.24, 0.36, 0.27)
+export const COLOR_INK = rgb(0.13, 0.17, 0.15)
+export const COLOR_SOFT = rgb(0.38, 0.43, 0.4)
+export const COLOR_ACCENT = rgb(0.24, 0.36, 0.27)
 const COLOR_LINE = rgb(0.68, 0.74, 0.69)
 const COLOR_BOX_FILL = rgb(0.93, 0.95, 0.91)
 
@@ -58,7 +58,7 @@ interface ParagraphOptions {
 }
 
 /** layout engine ง่าย ๆ: เดิน cursor จากบนลงล่าง ขึ้นหน้าใหม่อัตโนมัติ */
-class PdfWriter {
+export class PdfWriter {
   readonly doc: PDFDocument
   private readonly regular: PDFFont
   private readonly bold: PDFFont
@@ -722,7 +722,7 @@ let cachedFontBytes: FontBytes | null = null
 let cachedLogoBytes: ArrayBuffer | null = null
 
 /** โหลดโลโก้สำหรับหน้าปก — โหลดไม่ได้ก็สร้างเอกสารต่อ (โลโก้เป็นส่วนตกแต่ง) */
-async function loadLogoBytes(): Promise<ArrayBuffer | undefined> {
+export async function loadLogoBytes(): Promise<ArrayBuffer | undefined> {
   if (cachedLogoBytes) return cachedLogoBytes
   try {
     const res = await fetch(`${import.meta.env.BASE_URL}logo.png`)
@@ -735,7 +735,7 @@ async function loadLogoBytes(): Promise<ArrayBuffer | undefined> {
 }
 
 /** โหลดฟอนต์จาก /public/fonts ที่ bundle มากับแอป — ไม่มีการเรียก CDN */
-async function loadFontBytes(): Promise<FontBytes> {
+export async function loadFontBytes(): Promise<FontBytes> {
   if (cachedFontBytes) return cachedFontBytes
   const load = async (file: string): Promise<ArrayBuffer> => {
     const res = await fetch(`${import.meta.env.BASE_URL}fonts/${file}`)

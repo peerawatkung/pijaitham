@@ -20,6 +20,7 @@ export type Page =
   | { name: 'faq' }
   | { name: 'sample' }
   | { name: 'about' }
+  | { name: 'talkGuide' }
 
 interface FormContextValue {
   answers: FormAnswers
@@ -34,6 +35,7 @@ interface FormContextValue {
   goToFaq: () => void
   goToSample: () => void
   goToAbout: () => void
+  goToTalkGuide: () => void
 }
 
 const FormContext = createContext<FormContextValue | null>(null)
@@ -82,6 +84,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
   const goToFaq = useCallback(() => setPage({ name: 'faq' }), [])
   const goToSample = useCallback(() => setPage({ name: 'sample' }), [])
   const goToAbout = useCallback(() => setPage({ name: 'about' }), [])
+  const goToTalkGuide = useCallback(() => setPage({ name: 'talkGuide' }), [])
 
   return (
     <FormContext.Provider
@@ -97,6 +100,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
         goToFaq,
         goToSample,
         goToAbout,
+        goToTalkGuide,
       }}
     >
       {children}

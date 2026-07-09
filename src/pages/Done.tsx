@@ -8,7 +8,7 @@ import { useForm } from '../state/FormContext'
 
 /** หน้า "ขั้นตอนถัดไป" — แสดงหลังดาวน์โหลด PDF สำเร็จ */
 export function Done() {
-  const { answers, goToReview, goHome } = useForm()
+  const { answers, goToReview, goHome, goToTalkGuide } = useForm()
   const { generating, error, download } = usePdfDownload(answers)
 
   useEffect(() => {
@@ -42,6 +42,17 @@ export function Done() {
           </li>
         ))}
       </ol>
+
+      <p className="mt-4 text-base leading-relaxed text-ink-soft">
+        ขั้นตอนที่ 2 มักเป็นก้าวที่ยากที่สุด —{' '}
+        <button
+          type="button"
+          className="underline underline-offset-4 hover:text-ink"
+          onClick={goToTalkGuide}
+        >
+          เรามีคู่มือชวนครอบครัวคุยไว้ให้แล้ว
+        </button>
+      </p>
 
       <div className="mt-8 rounded-xl border border-dawn-100 bg-dawn-100/40 p-5">
         <p className="text-base leading-relaxed text-ink">

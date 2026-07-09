@@ -8,6 +8,7 @@ import { Faq } from './pages/Faq'
 import { Home } from './pages/Home'
 import { Review } from './pages/Review'
 import { Sample } from './pages/Sample'
+import { TalkGuide } from './pages/TalkGuide'
 import { Wizard } from './pages/Wizard'
 import { useForm } from './state/FormContext'
 
@@ -29,6 +30,8 @@ function CurrentPage() {
       return <Sample />
     case 'about':
       return <About />
+    case 'talkGuide':
+      return <TalkGuide />
   }
 }
 
