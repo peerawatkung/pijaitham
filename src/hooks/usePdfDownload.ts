@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { downloadErrorMessage } from '../lib/browser'
 import type { FormAnswers } from '../types/form'
 
 /** สถานะการสร้าง/ดาวน์โหลด PDF — ใช้ร่วมกันในหน้าตรวจทานและหน้าขั้นตอนถัดไป */
@@ -16,7 +17,7 @@ export function usePdfDownload(answers: FormAnswers, onSuccess?: () => void) {
       onSuccess?.()
     } catch (err) {
       console.error(err)
-      setError('สร้างเอกสารไม่สำเร็จ กรุณาลองอีกครั้ง')
+      setError(downloadErrorMessage())
     } finally {
       setGenerating(false)
     }

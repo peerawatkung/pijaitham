@@ -41,7 +41,8 @@ export function Home() {
       await downloadBlankPdf()
     } catch (err) {
       console.error(err)
-      setBlankError('สร้างเอกสารไม่สำเร็จ กรุณาลองอีกครั้ง')
+      const { downloadErrorMessage } = await import('../lib/browser')
+      setBlankError(downloadErrorMessage())
     } finally {
       setBlankBusy(false)
     }

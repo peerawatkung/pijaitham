@@ -4,7 +4,7 @@ import type { Color, PDFFont, PDFPage } from 'pdf-lib'
 import { APP_CONFIG } from '../../config/app'
 import { SECTIONS } from '../../content/questions'
 import { PDF_TEXT } from '../../content/pdfText'
-import { downloadBlob, safeFileSlug, ymd } from '../download'
+import { safeFileSlug, shareOrDownload, ymd } from '../download'
 import { formatAnswer } from '../formatAnswer'
 import type { FormAnswers, PersonAnswer } from '../../types/form'
 
@@ -709,7 +709,7 @@ export async function downloadPdf(answers: FormAnswers): Promise<void> {
   ])
   const bytes = await generatePdfBytes(answers, fontBytes, { logoPng })
   const blob = new Blob([bytes], { type: 'application/pdf' })
-  downloadBlob(blob, buildFileName(answers))
+  await shareOrDownload(blob, buildFileName(answers))
 }
 
 /**
@@ -726,5 +726,5 @@ export async function downloadBlankPdf(): Promise<void> {
     logoPng,
   })
   const blob = new Blob([bytes], { type: 'application/pdf' })
-  downloadBlob(blob, `${APP_CONFIG.fileSlug}-แบบฟอร์มเปล่า-${ymd()}.pdf`)
+  await shareOrDownload(blob, `${APP_CONFIG.fileSlug}-แบบฟอร์มเปล่า-${ymd()}.pdf`)
 }

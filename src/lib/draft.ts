@@ -14,7 +14,7 @@ import type {
   FormAnswers,
   PersonAnswer,
 } from '../types/form'
-import { downloadBlob, safeFileSlug, ymd } from './download'
+import { safeFileSlug, shareOrDownload, ymd } from './download'
 
 /** ข้อผิดพลาดที่แสดงต่อผู้ใช้ได้โดยตรง (ข้อความภาษาไทย) */
 export class DraftError extends Error {}
@@ -139,5 +139,5 @@ export function exportDraft(answers: FormAnswers): void {
   })
   const name = typeof answers['fullName'] === 'string' ? answers['fullName'] : ''
   const fileName = `${APP_CONFIG.fileSlug}-draft-${safeFileSlug(name.trim()) || 'เอกสาร'}-${ymd()}.json`
-  downloadBlob(blob, fileName)
+  void shareOrDownload(blob, fileName)
 }

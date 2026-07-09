@@ -1,4 +1,5 @@
 import { FontSizeControl } from './components/FontSizeControl'
+import { InAppBrowserNotice } from './components/InAppBrowserNotice'
 import { Logo } from './components/Logo'
 import { APP_CONFIG } from './config/app'
 import { Done } from './pages/Done'
@@ -27,6 +28,7 @@ export function App() {
 
   return (
     <>
+      <InAppBrowserNotice />
       <header className="mx-auto flex max-w-2xl items-center justify-between px-5 pt-4">
         {page.name === 'home' ? (
           <span />
