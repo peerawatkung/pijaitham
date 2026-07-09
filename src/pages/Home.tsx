@@ -82,10 +82,12 @@ export function Home() {
           height={640}
           className="h-auto w-72 sm:w-80"
         />
-        <p className="max-w-lg text-xl leading-relaxed text-ink">
-          พื้นที่เงียบ ๆ สำหรับทบทวนสิ่งที่ใจให้คุณค่า
-          และบอกความตั้งใจเรื่องการดูแลช่วงท้ายของชีวิต
-          ไว้ให้คนที่คุณรักไม่ต้องเดา
+        <p className="mt-2 max-w-xl text-2xl font-bold leading-snug text-tea-700 sm:text-3xl">
+          บอกความตั้งใจไว้ล่วงหน้า ในวันที่ยังบอกได้
+        </p>
+        <p className="mt-4 max-w-lg text-lg leading-relaxed text-ink sm:text-xl">
+          เพื่อให้คนที่คุณรักดูแลคุณได้ตรงใจ ไม่ต้องเดา
+          และไม่ต้องแบกการตัดสินใจที่ยากที่สุดไว้เพียงลำพัง
         </p>
         <p className="mt-5 inline-flex items-center gap-2.5 rounded-full border border-tea-200 bg-tea-100 px-5 py-2.5 text-base font-bold text-tea-700">
           <svg
