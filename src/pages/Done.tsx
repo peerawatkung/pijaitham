@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ShareButton } from '../components/ShareButton'
 import { PDF_TEXT } from '../content/pdfText'
 import { usePdfDownload } from '../hooks/usePdfDownload'
+import { downloadErrorMessage } from '../lib/browser'
 import { exportDraft } from '../lib/draft'
 import { downloadReviewReminder } from '../lib/reviewReminder'
 import { useForm } from '../state/FormContext'
@@ -10,6 +11,23 @@ import { useForm } from '../state/FormContext'
 export function Done() {
   const { answers, goToReview, goHome, goToTalkGuide } = useForm()
   const { generating, error, download } = usePdfDownload(answers)
+
+  const [cardGenerating, setCardGenerating] = useState(false)
+  const [cardError, setCardError] = useState<string | null>(null)
+  const downloadCard = useCallback(async () => {
+    setCardGenerating(true)
+    setCardError(null)
+    try {
+      // โหลด PDF engine เฉพาะเมื่อกดดาวน์โหลด เช่นเดียวกับเอกสารหลัก
+      const { downloadWalletCardPdf } = await import('../lib/pdf/walletCardPdf')
+      await downloadWalletCardPdf(answers)
+    } catch (err) {
+      console.error(err)
+      setCardError(downloadErrorMessage())
+    } finally {
+      setCardGenerating(false)
+    }
+  }, [answers])
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -74,6 +92,25 @@ export function Done() {
         {error ? (
           <p role="alert" className="text-center text-lg text-red-700">
             {error}
+          </p>
+        ) : null}
+        <button
+          type="button"
+          disabled={cardGenerating}
+          className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30 disabled:cursor-wait disabled:opacity-60"
+          onClick={() => void downloadCard()}
+        >
+          {cardGenerating
+            ? 'กำลังสร้างการ์ด...'
+            : 'ดาวน์โหลดการ์ดพกกระเป๋า (PDF)'}
+        </button>
+        <p className="text-center text-sm leading-relaxed text-ink-soft">
+          การ์ดขนาดบัตร บอกว่าคุณมีหนังสือแสดงเจตนา เก็บไว้ที่ไหน และติดต่อใคร
+          — ตัด พับ ใส่กระเป๋าเงิน มีประโยชน์ยามฉุกเฉินที่เอกสารตัวเต็มไม่ได้อยู่กับตัว
+        </p>
+        {cardError ? (
+          <p role="alert" className="text-center text-lg text-red-700">
+            {cardError}
           </p>
         ) : null}
         <button

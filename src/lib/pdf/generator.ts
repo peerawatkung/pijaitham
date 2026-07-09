@@ -41,6 +41,51 @@ function segmentWords(text: string): string[] {
   return text.split(/(\s+)/).filter((s) => s !== '')
 }
 
+/** ตัดข้อความหนึ่งย่อหน้าเป็นบรรทัดตามความกว้าง (ตัดตามขอบเขตคำไทย) — ใช้ได้กับทุกขนาดหน้า */
+export function wrapText(
+  font: PDFFont,
+  text: string,
+  size: number,
+  maxWidth: number,
+): string[] {
+  const width = (s: string) => font.widthOfTextAtSize(s, size)
+  const lines: string[] = []
+  let current = ''
+
+  const pushCurrent = () => {
+    if (current.trimEnd()) lines.push(current.trimEnd())
+    current = ''
+  }
+
+  for (const seg of segmentWords(text)) {
+    if (width(current + seg) <= maxWidth) {
+      current += seg
+      continue
+    }
+    pushCurrent()
+    if (/^\s+$/.test(seg)) continue // ไม่ขึ้นบรรทัดใหม่ด้วยช่องว่าง
+    if (width(seg) <= maxWidth) {
+      current = seg
+      continue
+    }
+    // คำเดียวยาวเกินบรรทัด (เช่น ข้อความไม่มีช่องว่างเลย) — ตัดทีละอักขระ
+    // โดยไม่แยกสระ/วรรณยุกต์ออกจากตัวที่มันเกาะ
+    for (const ch of Array.from(seg)) {
+      if (
+        width(current + ch) > maxWidth &&
+        current &&
+        !THAI_COMBINING.test(ch)
+      ) {
+        lines.push(current)
+        current = ''
+      }
+      current += ch
+    }
+  }
+  pushCurrent()
+  return lines.length > 0 ? lines : ['']
+}
+
 export interface FontBytes {
   regular: ArrayBuffer
   bold: ArrayBuffer
@@ -93,43 +138,7 @@ export class PdfWriter {
 
   /** ตัดข้อความหนึ่งย่อหน้าเป็นบรรทัดตามความกว้าง (ตัดตามขอบเขตคำไทย) */
   wrap(text: string, size: number, bold: boolean, maxWidth: number): string[] {
-    const font = this.font(bold)
-    const width = (s: string) => font.widthOfTextAtSize(s, size)
-    const lines: string[] = []
-    let current = ''
-
-    const pushCurrent = () => {
-      if (current.trimEnd()) lines.push(current.trimEnd())
-      current = ''
-    }
-
-    for (const seg of segmentWords(text)) {
-      if (width(current + seg) <= maxWidth) {
-        current += seg
-        continue
-      }
-      pushCurrent()
-      if (/^\s+$/.test(seg)) continue // ไม่ขึ้นบรรทัดใหม่ด้วยช่องว่าง
-      if (width(seg) <= maxWidth) {
-        current = seg
-        continue
-      }
-      // คำเดียวยาวเกินบรรทัด (เช่น ข้อความไม่มีช่องว่างเลย) — ตัดทีละอักขระ
-      // โดยไม่แยกสระ/วรรณยุกต์ออกจากตัวที่มันเกาะ
-      for (const ch of Array.from(seg)) {
-        if (
-          width(current + ch) > maxWidth &&
-          current &&
-          !THAI_COMBINING.test(ch)
-        ) {
-          lines.push(current)
-          current = ''
-        }
-        current += ch
-      }
-    }
-    pushCurrent()
-    return lines.length > 0 ? lines : ['']
+    return wrapText(this.font(bold), text, size, maxWidth)
   }
 
   paragraph(text: string, opts: ParagraphOptions = {}): void {
