@@ -320,13 +320,13 @@ class PdfWriter {
     const x = MARGIN_X + 16
     const lineHeight = size * LINE_SPACING
     // เว้นช่องเหนือเส้นให้เขียนด้วยมือได้ แต่กระชับพอให้ส่วนลงนามจบหน้าเดียว
-    const GAP = 6
+    const GAP = 7
     const rows = opts.withRelation ? 4 : 3
-    const blockHeight = 4 + (lineHeight + GAP) * rows + lineHeight + 8
+    const blockHeight = 6 + (lineHeight + GAP) * rows + lineHeight + 10
     this.ensure(blockHeight)
 
     // ช่องว่างเหนือเส้นเซ็น ให้ลายเซ็นไม่ชนข้อความก่อนหน้า
-    this.moveDown(4)
+    this.moveDown(6)
     this.paragraph(this.dotted('ลงชื่อ ', ` ${role}`, CONTENT_WIDTH - 32, size), {
       x,
       spaceAfter: GAP,
@@ -348,7 +348,7 @@ class PdfWriter {
     }
     this.paragraph(
       'วันที่ ................ เดือน ............................ พ.ศ. ................',
-      { x: x + 28, spaceAfter: 8 },
+      { x: x + 28, spaceAfter: 10 },
     )
   }
 }
@@ -640,30 +640,32 @@ export async function generatePdfBytes(
   w.paragraph(PDF_TEXT.signing.intro, {
     size: 10.5,
     color: COLOR_SOFT,
-    spaceAfter: 4,
+    spaceAfter: 6,
   })
-  w.paragraph(PDF_TEXT.signing.declaration, { size: 11.5, spaceAfter: 10 })
+  w.paragraph(PDF_TEXT.signing.declaration, { size: 11.5, spaceAfter: 14 })
   w.signatureBlock(PDF_TEXT.signing.ownerRole, {
     printedName: ownerName ?? undefined,
   })
 
   // หัวข้อ + หมายเหตุ + บล็อกลงนามแรก ต้องอยู่หน้าเดียวกัน ไม่ให้หัวข้อค้างท้ายหน้า
+  w.moveDown(6)
   w.ensure(220)
   w.subheading(PDF_TEXT.signing.witnessHeading)
   w.paragraph(PDF_TEXT.signing.witnessNote, {
     size: 9.5,
     color: COLOR_SOFT,
-    spaceAfter: 6,
+    spaceAfter: 10,
   })
   w.signatureBlock(PDF_TEXT.signing.witness1Role, { withRelation: true })
   w.signatureBlock(PDF_TEXT.signing.witness2Role, { withRelation: true })
 
+  w.moveDown(6)
   w.ensure(180)
   w.subheading(PDF_TEXT.signing.proxyHeading)
   w.paragraph(PDF_TEXT.signing.proxyNote, {
     size: 9.5,
     color: COLOR_SOFT,
-    spaceAfter: 6,
+    spaceAfter: 10,
   })
   const proxy1 = getPerson(answers, 'proxy1')
   const proxy2 = getPerson(answers, 'proxy2')
