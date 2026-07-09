@@ -61,6 +61,10 @@ export function Done() {
         ))}
       </ol>
 
+      <p className="mt-4 rounded-xl border border-tea-200 bg-tea-100/60 p-4 text-lg leading-relaxed text-ink">
+        <span aria-hidden="true">💳</span> {PDF_TEXT.appendix.afterPrintNote}
+      </p>
+
       <p className="mt-4 text-base leading-relaxed text-ink-soft">
         ขั้นตอนที่ 2 มักเป็นก้าวที่ยากที่สุด —{' '}
         <button

@@ -695,6 +695,13 @@ export async function generatePdfBytes(
   PDF_TEXT.appendix.afterPrintSteps.forEach((step, i) => {
     w.paragraph(`${i + 1}. ${step}`, { x: MARGIN_X + 10, spaceAfter: 4 })
   })
+  w.moveDown(2)
+  w.paragraph(PDF_TEXT.appendix.afterPrintNote, {
+    x: MARGIN_X + 10,
+    bold: true,
+    color: COLOR_ACCENT,
+    spaceAfter: 4,
+  })
   w.moveDown(10)
 
   w.subheading(PDF_TEXT.appendix.lawTitle)
