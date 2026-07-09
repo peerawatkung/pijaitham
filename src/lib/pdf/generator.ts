@@ -319,12 +319,17 @@ class PdfWriter {
     const size = 11.5
     const x = MARGIN_X + 16
     const lineHeight = size * LINE_SPACING
-    const blockHeight = lineHeight * (opts.withRelation ? 5 : 4) + 14
+    // แต่ละบรรทัดเว้นช่องว่างให้เขียนด้วยมือ (~1 ซม.) เหนือเส้น
+    const GAP = 10
+    const rows = opts.withRelation ? 4 : 3
+    const blockHeight = 8 + (lineHeight + GAP) * rows + lineHeight + 18
     this.ensure(blockHeight)
 
+    // ช่องว่างเหนือเส้นเซ็น ให้ลายเซ็นไม่ชนข้อความก่อนหน้า
+    this.moveDown(8)
     this.paragraph(this.dotted('ลงชื่อ ', ` ${role}`, CONTENT_WIDTH - 32, size), {
       x,
-      spaceAfter: 2,
+      spaceAfter: GAP,
     })
     const nameText = opts.printedName
       ? `( ${opts.printedName} )`
@@ -333,17 +338,17 @@ class PdfWriter {
       x: x + 28,
       size: opts.printedName ? size : 10.5,
       color: COLOR_SOFT,
-      spaceAfter: 2,
+      spaceAfter: GAP,
     })
     if (opts.withRelation) {
       this.paragraph(
         this.dotted(`${PDF_TEXT.signing.relationLabel} `, '', 300, size),
-        { x: x + 28, spaceAfter: 2 },
+        { x: x + 28, spaceAfter: GAP },
       )
     }
     this.paragraph(
       'วันที่ ................ เดือน ............................ พ.ศ. ................',
-      { x: x + 28, spaceAfter: 14 },
+      { x: x + 28, spaceAfter: 18 },
     )
   }
 }
@@ -628,6 +633,8 @@ export async function generatePdfBytes(
     printedName: ownerName ?? undefined,
   })
 
+  // หัวข้อ + หมายเหตุ + บล็อกลงนามแรก ต้องอยู่หน้าเดียวกัน ไม่ให้หัวข้อค้างท้ายหน้า
+  w.ensure(250)
   w.subheading(PDF_TEXT.signing.witnessHeading)
   w.paragraph(PDF_TEXT.signing.witnessNote, {
     size: 10.5,
@@ -637,6 +644,7 @@ export async function generatePdfBytes(
   w.signatureBlock(PDF_TEXT.signing.witness1Role, { withRelation: true })
   w.signatureBlock(PDF_TEXT.signing.witness2Role, { withRelation: true })
 
+  w.ensure(210)
   w.subheading(PDF_TEXT.signing.proxyHeading)
   w.paragraph(PDF_TEXT.signing.proxyNote, {
     size: 10.5,
