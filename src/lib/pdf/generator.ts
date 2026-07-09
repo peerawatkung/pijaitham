@@ -574,6 +574,9 @@ export async function generatePdfBytes(
           w.writeLine('ชื่อ-นามสกุล')
           w.writeLine('ความสัมพันธ์')
           w.writeLine('เบอร์ติดต่อ')
+          w.writeLine('LINE ID')
+          w.writeLine('Facebook / อีเมล')
+          w.writeLine('ช่องทางอื่น ๆ')
           w.moveDown(5)
           break
       }

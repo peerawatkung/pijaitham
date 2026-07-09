@@ -64,13 +64,20 @@ function validateValue(field: FieldDef, raw: unknown): AnswerValue | undefined {
 
     case 'person': {
       if (!isRecord(raw)) return undefined
+      const str = (key: string): string =>
+        typeof raw[key] === 'string' ? (raw[key] as string) : ''
       const person: PersonAnswer = {
-        name: typeof raw['name'] === 'string' ? raw['name'] : '',
-        relation: typeof raw['relation'] === 'string' ? raw['relation'] : '',
-        phone: typeof raw['phone'] === 'string' ? raw['phone'] : '',
+        name: str('name'),
+        relation: str('relation'),
+        phone: str('phone'),
+        // ช่องทางติดต่อเพิ่มเมื่อ 2026-07-08 — draft เก่าไม่มี field เหล่านี้ ถือเป็นค่าว่าง
+        lineId: str('lineId'),
+        facebook: str('facebook'),
+        email: str('email'),
+        otherContact: str('otherContact'),
       }
-      if (!person.name && !person.relation && !person.phone) return undefined
-      return person
+      const hasValue = Object.values(person).some((v) => v !== '')
+      return hasValue ? person : undefined
     }
   }
 }

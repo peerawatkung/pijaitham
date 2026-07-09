@@ -45,11 +45,19 @@ export function formatAnswer(
 
     case 'person': {
       const person = value as PersonAnswer
-      const parts: string[] = []
-      if (person.name) parts.push(person.name)
-      if (person.relation) parts.push(`(${person.relation})`)
-      if (person.phone) parts.push(`โทร ${person.phone}`)
-      return parts.length > 0 ? parts.join(' ') : null
+      const who: string[] = []
+      if (person.name) who.push(person.name)
+      if (person.relation) who.push(`(${person.relation})`)
+      const contacts: string[] = []
+      if (person.phone) contacts.push(`โทร ${person.phone}`)
+      if (person.lineId) contacts.push(`LINE: ${person.lineId}`)
+      if (person.facebook) contacts.push(`Facebook: ${person.facebook}`)
+      if (person.email) contacts.push(`อีเมล: ${person.email}`)
+      if (person.otherContact) contacts.push(`อื่น ๆ: ${person.otherContact}`)
+      const text = [who.join(' '), contacts.join(' · ')]
+        .filter(Boolean)
+        .join('\n')
+      return text || null
     }
 
     case 'checkbox':

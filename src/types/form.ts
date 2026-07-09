@@ -10,11 +10,15 @@ export interface MultiChoiceAnswer {
   other?: string
 }
 
-/** ข้อมูลบุคคล (ผู้ตัดสินใจแทน) */
+/** ข้อมูลบุคคล (ผู้ตัดสินใจแทน) — ช่องทางติดต่อทุกช่องเว้นได้ */
 export interface PersonAnswer {
   name: string
   relation: string
   phone: string
+  lineId: string
+  facebook: string
+  email: string
+  otherContact: string
 }
 
 export type AnswerValue =
