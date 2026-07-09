@@ -319,14 +319,14 @@ class PdfWriter {
     const size = 11.5
     const x = MARGIN_X + 16
     const lineHeight = size * LINE_SPACING
-    // แต่ละบรรทัดเว้นช่องว่างให้เขียนด้วยมือ (~1 ซม.) เหนือเส้น
-    const GAP = 10
+    // เว้นช่องเหนือเส้นให้เขียนด้วยมือได้ แต่กระชับพอให้ส่วนลงนามจบหน้าเดียว
+    const GAP = 6
     const rows = opts.withRelation ? 4 : 3
-    const blockHeight = 8 + (lineHeight + GAP) * rows + lineHeight + 18
+    const blockHeight = 4 + (lineHeight + GAP) * rows + lineHeight + 8
     this.ensure(blockHeight)
 
     // ช่องว่างเหนือเส้นเซ็น ให้ลายเซ็นไม่ชนข้อความก่อนหน้า
-    this.moveDown(8)
+    this.moveDown(4)
     this.paragraph(this.dotted('ลงชื่อ ', ` ${role}`, CONTENT_WIDTH - 32, size), {
       x,
       spaceAfter: GAP,
@@ -348,7 +348,7 @@ class PdfWriter {
     }
     this.paragraph(
       'วันที่ ................ เดือน ............................ พ.ศ. ................',
-      { x: x + 28, spaceAfter: 18 },
+      { x: x + 28, spaceAfter: 8 },
     )
   }
 }
@@ -637,29 +637,33 @@ export async function generatePdfBytes(
   // ---- ส่วนที่ 8: การลงนาม (ขึ้นหน้าใหม่เสมอ) ----
   w.newPage()
   w.sectionHeading(PDF_TEXT.signing.title)
-  w.paragraph(PDF_TEXT.signing.intro, { size: 11, color: COLOR_SOFT })
-  w.paragraph(PDF_TEXT.signing.declaration, { size: 12, spaceAfter: 18 })
+  w.paragraph(PDF_TEXT.signing.intro, {
+    size: 10.5,
+    color: COLOR_SOFT,
+    spaceAfter: 4,
+  })
+  w.paragraph(PDF_TEXT.signing.declaration, { size: 11.5, spaceAfter: 10 })
   w.signatureBlock(PDF_TEXT.signing.ownerRole, {
     printedName: ownerName ?? undefined,
   })
 
   // หัวข้อ + หมายเหตุ + บล็อกลงนามแรก ต้องอยู่หน้าเดียวกัน ไม่ให้หัวข้อค้างท้ายหน้า
-  w.ensure(250)
+  w.ensure(220)
   w.subheading(PDF_TEXT.signing.witnessHeading)
   w.paragraph(PDF_TEXT.signing.witnessNote, {
-    size: 10.5,
+    size: 9.5,
     color: COLOR_SOFT,
-    spaceAfter: 12,
+    spaceAfter: 6,
   })
   w.signatureBlock(PDF_TEXT.signing.witness1Role, { withRelation: true })
   w.signatureBlock(PDF_TEXT.signing.witness2Role, { withRelation: true })
 
-  w.ensure(210)
+  w.ensure(180)
   w.subheading(PDF_TEXT.signing.proxyHeading)
   w.paragraph(PDF_TEXT.signing.proxyNote, {
-    size: 10.5,
+    size: 9.5,
     color: COLOR_SOFT,
-    spaceAfter: 12,
+    spaceAfter: 6,
   })
   const proxy1 = getPerson(answers, 'proxy1')
   const proxy2 = getPerson(answers, 'proxy2')
