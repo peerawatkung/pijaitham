@@ -541,12 +541,39 @@ export async function generatePdfBytes(
         continue
       }
 
-      w.fieldLabel(field.label)
       if (text !== null) {
+        w.fieldLabel(field.label)
         w.answerText(text)
         continue
       }
       // ไม่ได้ตอบ — เว้นว่างให้เขียนด้วยปากกา
+      // จองพื้นที่ทั้งบล็อกก่อนวาด กันคำถามกับช่องติ๊ก/เส้นเขียนถูกตัดข้ามหน้า
+      const LABEL_H = 22
+      const ROW_H = 23 // checkboxRow หนึ่งแถว
+      const LINE_H = 35 // writeLine หนึ่งเส้น (รวมช่องว่างเหนือเส้น)
+      let blockHeight = LABEL_H
+      switch (field.type) {
+        case 'text':
+          blockHeight += LINE_H
+          break
+        case 'textarea':
+          blockHeight += Math.min(Math.max(field.rows ?? 3, 2), 6) * LINE_H
+          break
+        case 'choice':
+        case 'multichoice':
+          blockHeight +=
+            (field.options.length +
+              (field.type === 'multichoice' && field.allowOther ? 1 : 0)) *
+            ROW_H
+          break
+        case 'person':
+          blockHeight += 7 * LINE_H
+          break
+      }
+      // กันกรณีบล็อกสูงเกินหน้ากระดาษ (ไม่มีเคสจริงในปัจจุบัน)
+      w.ensure(Math.min(blockHeight, 600))
+
+      w.fieldLabel(field.label)
       switch (field.type) {
         case 'text':
           w.writeLine()
