@@ -219,10 +219,12 @@ export function Home() {
         </button>
 
         <div className="mt-6 rounded-xl border border-tea-200 bg-card p-5">
-          <p className="text-base leading-relaxed text-ink">
-            ไม่สะดวกกรอกข้อมูลลงในเว็บ
-            ดาวน์โหลดแบบฟอร์มเปล่าไปปริ้น แล้วเขียนด้วยปากกาได้ทั้งฉบับ —
-            แบบฟอร์มเปล่าไม่มีข้อมูลใด ๆ ของคุณอยู่เลย
+          <h3 className="text-lg font-bold text-ink">
+            อยากเขียนด้วยปากกาแทน
+          </h3>
+          <p className="mt-1 text-base leading-relaxed text-ink">
+            ดาวน์โหลดแบบฟอร์มเปล่าไปปริ้น แล้วเขียนเองได้ทั้งฉบับ
+            — ไม่ต้องพิมพ์อะไรลงในเว็บเลย
           </p>
           <button
             type="button"
@@ -241,9 +243,12 @@ export function Home() {
 
         {/* ---- ทำต่อจากครั้งก่อน (เดิมคือ "เปิดแบบร่างจากไฟล์") ---- */}
         <div className="mt-6 rounded-xl border border-tea-200 bg-card p-5">
-          <p className="text-base leading-relaxed text-ink">
-            เคยทำค้างไว้ใช่ไหม ถ้าตอนนั้นกด &ldquo;บันทึกแบบร่างลงเครื่อง&rdquo;
-            ไว้ ให้เลือกไฟล์ที่บันทึกไว้ แล้วกลับมาทำต่อจากเดิมได้เลย
+          <h3 className="text-lg font-bold text-ink">
+            เคยทำค้างไว้ กลับมาทำต่อได้
+          </h3>
+          <p className="mt-1 text-base leading-relaxed text-ink">
+            ถ้าเคยกด &ldquo;บันทึกแบบร่างลงเครื่อง&rdquo; ไว้
+            เพียงเลือกไฟล์นั้น — คำตอบเดิมจะกลับมาครบทุกข้อ
           </p>
           <button
             type="button"
