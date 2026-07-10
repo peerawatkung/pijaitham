@@ -6,6 +6,7 @@ import { About } from './pages/About'
 import { Done } from './pages/Done'
 import { Faq } from './pages/Faq'
 import { Home } from './pages/Home'
+import { Resources } from './pages/Resources'
 import { Review } from './pages/Review'
 import { Sample } from './pages/Sample'
 import { TalkGuide } from './pages/TalkGuide'
@@ -32,6 +33,8 @@ function CurrentPage() {
       return <About />
     case 'talkGuide':
       return <TalkGuide />
+    case 'resources':
+      return <Resources />
   }
 }
 
