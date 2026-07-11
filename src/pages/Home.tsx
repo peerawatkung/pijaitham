@@ -365,6 +365,15 @@ export function Home() {
           {APP_CONFIG.name} · {APP_CONFIG.englishName} — {APP_CONFIG.tagline}
         </p>
         <p className="mt-1 text-sm leading-relaxed text-ink-soft">
+          ติดต่อ:{' '}
+          <a
+            href={`mailto:${APP_CONFIG.contactEmail}`}
+            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+          >
+            {APP_CONFIG.contactEmail}
+          </a>
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-ink-soft">
           เครื่องมือนี้ช่วยเรียบเรียงเจตนาเท่านั้น
           ไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย
         </p>

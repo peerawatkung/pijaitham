@@ -10,6 +10,8 @@ export const APP_CONFIG = {
   /** ชื่อทางการของเอกสารที่สร้าง */
   documentTitle: 'หนังสือแสดงเจตนาเกี่ยวกับการดูแลสุขภาพช่วงท้ายของชีวิต',
   domain: 'pijaitham.com',
+  /** อีเมลติดต่อผู้จัดทำ — แสดงในหน้า About และ footer หน้าแรก */
+  contactEmail: 'peerawat.kit@gmail.com',
   /** ใช้ประกอบชื่อไฟล์ที่ดาวน์โหลด เช่น พิใจธรรม-สมศรี-20260709.pdf */
   fileSlug: 'พิใจธรรม',
 } as const

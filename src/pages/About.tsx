@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { ShareButton } from '../components/ShareButton'
+import { APP_CONFIG } from '../config/app'
 import { ABOUT_BLOCKS, ABOUT_TITLE } from '../content/about'
 import type { AboutBlock } from '../content/about'
 import { useForm } from '../state/FormContext'
@@ -82,6 +83,18 @@ export function About() {
         <div className="mt-3">
           <ShareButton />
         </div>
+      </div>
+
+      <div className="mt-10 rounded-xl border border-tea-200 bg-card p-5 text-center">
+        <p className="text-base leading-relaxed text-ink">
+          มีคำถาม ข้อเสนอแนะ หรือพบข้อผิดพลาด — ยินดีรับฟังเสมอ
+        </p>
+        <a
+          href={`mailto:${APP_CONFIG.contactEmail}`}
+          className="mt-1 inline-block text-lg font-bold text-tea-700 underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+        >
+          {APP_CONFIG.contactEmail}
+        </a>
       </div>
     </main>
   )
