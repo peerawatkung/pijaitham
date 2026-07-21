@@ -6,8 +6,9 @@
 import fontkit from '@pdf-lib/fontkit'
 import { PDFDocument } from 'pdf-lib'
 import type { Color, PDFFont, PDFPage } from 'pdf-lib'
-import { APP_CONFIG } from '../../config/app'
+import { APP_CONFIG, DOCTORS_URL } from '../../config/app'
 import { shareOrDownload, ymd } from '../download'
+import { drawQrCode } from './qr'
 import type { FormAnswers, PersonAnswer } from '../../types/form'
 import {
   COLOR_ACCENT,
@@ -231,13 +232,25 @@ function drawBackPanel(
     y -= 5
   }
 
+  // QR มุมล่างขวา ชี้ไปหน้าคำอธิบายสำหรับแพทย์ — ผู้พบการ์ดเข้าใจเอกสารได้ทันที
+  const qrSize = 34
+  drawQrCode(page, DOCTORS_URL, {
+    x: CARD_X + PANEL_W * 2 - PAD - qrSize,
+    y: topY - PANEL_H + 10,
+    size: qrSize,
+  })
   draw(
     page,
     'รายละเอียดทั้งหมดอยู่ในหนังสือแสดงเจตนาฉบับเต็ม',
     x,
-    topY - PANEL_H + 8,
+    topY - PANEL_H + 18,
     { size: 6.5, font: fonts.regular, color: COLOR_SOFT },
   )
+  draw(page, 'แพทย์/ผู้พบเห็น: สแกนดูคำอธิบายเอกสาร', x, topY - PANEL_H + 8, {
+    size: 6.5,
+    font: fonts.regular,
+    color: COLOR_SOFT,
+  })
 }
 
 /** การ์ดหนึ่งใบ: กรอบเส้นประสำหรับตัด + เส้นพับกลาง + สองแผง */

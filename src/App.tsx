@@ -5,6 +5,7 @@ import { APP_CONFIG } from './config/app'
 import { About } from './pages/About'
 import { Done } from './pages/Done'
 import { Faq } from './pages/Faq'
+import { ForDoctors } from './pages/ForDoctors'
 import { Home } from './pages/Home'
 import { Resources } from './pages/Resources'
 import { Review } from './pages/Review'
@@ -35,6 +36,8 @@ function CurrentPage() {
       return <TalkGuide />
     case 'resources':
       return <Resources />
+    case 'forDoctors':
+      return <ForDoctors />
   }
 }
 

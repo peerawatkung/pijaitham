@@ -22,6 +22,7 @@ export type Page =
   | { name: 'about' }
   | { name: 'talkGuide' }
   | { name: 'resources' }
+  | { name: 'forDoctors' }
 
 interface FormContextValue {
   answers: FormAnswers
@@ -38,13 +39,28 @@ interface FormContextValue {
   goToAbout: () => void
   goToTalkGuide: () => void
   goToResources: () => void
+  goToForDoctors: () => void
 }
 
 const FormContext = createContext<FormContextValue | null>(null)
 
+/**
+ * รองรับ deep link เส้นทางเดียว: /doctors (ปลายทางของ QR บนการ์ดและเอกสาร)
+ * — เส้นทางอื่นเริ่มที่หน้าแรกเสมอ
+ */
+function initialPage(): Page {
+  if (
+    typeof window !== 'undefined' &&
+    window.location.pathname.replace(/\/+$/, '') === '/doctors'
+  ) {
+    return { name: 'forDoctors' }
+  }
+  return { name: 'home' }
+}
+
 export function FormProvider({ children }: { children: ReactNode }) {
   const [answers, setAnswers] = useState<FormAnswers>({})
-  const [page, setPage] = useState<Page>({ name: 'home' })
+  const [page, setPage] = useState<Page>(initialPage)
 
   const setAnswer = useCallback(
     (id: string, value: AnswerValue | undefined) => {
@@ -88,6 +104,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
   const goToAbout = useCallback(() => setPage({ name: 'about' }), [])
   const goToTalkGuide = useCallback(() => setPage({ name: 'talkGuide' }), [])
   const goToResources = useCallback(() => setPage({ name: 'resources' }), [])
+  const goToForDoctors = useCallback(() => setPage({ name: 'forDoctors' }), [])
 
   return (
     <FormContext.Provider
@@ -105,6 +122,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
         goToAbout,
         goToTalkGuide,
         goToResources,
+        goToForDoctors,
       }}
     >
       {children}

@@ -29,6 +29,24 @@ export function Done() {
     }
   }, [answers])
 
+  const [letterGenerating, setLetterGenerating] = useState(false)
+  const [letterError, setLetterError] = useState<string | null>(null)
+  const downloadLetter = useCallback(async () => {
+    setLetterGenerating(true)
+    setLetterError(null)
+    try {
+      const { downloadCoverLetterPdf } = await import(
+        '../lib/pdf/coverLetterPdf'
+      )
+      await downloadCoverLetterPdf(answers)
+    } catch (err) {
+      console.error(err)
+      setLetterError(downloadErrorMessage())
+    } finally {
+      setLetterGenerating(false)
+    }
+  }, [answers])
+
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [])
@@ -115,6 +133,25 @@ export function Done() {
         {cardError ? (
           <p role="alert" className="text-center text-lg text-red-700">
             {cardError}
+          </p>
+        ) : null}
+        <button
+          type="button"
+          disabled={letterGenerating}
+          className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30 disabled:cursor-wait disabled:opacity-60"
+          onClick={() => void downloadLetter()}
+        >
+          {letterGenerating
+            ? 'กำลังสร้างใบปะหน้า...'
+            : 'ดาวน์โหลดใบปะหน้าฝากเวชระเบียน (PDF)'}
+        </button>
+        <p className="text-center text-sm leading-relaxed text-ink-soft">
+          จดหมายนำส่งสั้น ๆ ยื่นพร้อมสำเนาที่งานเวชระเบียนโรงพยาบาลที่รักษาประจำ
+          — ช่วยให้ขั้นตอนมอบสำเนา (ข้อ 3) ง่ายขึ้นมาก
+        </p>
+        {letterError ? (
+          <p role="alert" className="text-center text-lg text-red-700">
+            {letterError}
           </p>
         ) : null}
         <button

@@ -1,11 +1,12 @@
 import fontkit from '@pdf-lib/fontkit'
 import { PDFDocument, rgb } from 'pdf-lib'
 import type { Color, PDFFont, PDFPage } from 'pdf-lib'
-import { APP_CONFIG } from '../../config/app'
+import { APP_CONFIG, DOCTORS_URL } from '../../config/app'
 import { SECTIONS } from '../../content/questions'
 import { PDF_TEXT } from '../../content/pdfText'
 import { safeFileSlug, shareOrDownload, ymd } from '../download'
 import { formatAnswer } from '../formatAnswer'
+import { drawQrCode } from './qr'
 import type { FormAnswers, PersonAnswer } from '../../types/form'
 
 // ---- ขนาดหน้าและระยะขอบ (หน่วย pt) — A4 พร้อมปริ้น ----
@@ -512,6 +513,22 @@ export async function generatePdfBytes(
       color: COLOR_SOFT,
     })
   }
+  // QR สำหรับแพทย์/ผู้รับเอกสาร — ชี้ไปหน้าคำอธิบาย ช่วยให้เอกสารถูกยอมรับง่ายขึ้น
+  const qrSize = 42
+  drawQrCode(w.page, DOCTORS_URL, {
+    x: (PAGE_WIDTH - qrSize) / 2,
+    y: 168,
+    size: qrSize,
+  })
+  const qrCaption = PDF_TEXT.cover.doctorsQr
+  w.page.drawText(qrCaption, {
+    x: (PAGE_WIDTH - regular.widthOfTextAtSize(qrCaption, 7.5)) / 2,
+    y: 155,
+    size: 7.5,
+    font: regular,
+    color: COLOR_SOFT,
+  })
+
   // หมายเหตุท้ายหน้าปก — เส้นสั้นคั่นด้านบนให้ดูเรียบร้อย
   w.y = 132
   w.page.drawLine({

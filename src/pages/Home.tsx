@@ -36,6 +36,7 @@ export function Home() {
     goToAbout,
     goToTalkGuide,
     goToResources,
+    goToForDoctors,
     loadAnswers,
   } = useForm()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -351,6 +352,13 @@ export function Home() {
             onClick={goToResources}
           >
             แหล่งข้อมูลเพิ่มเติม
+          </button>
+          <button
+            type="button"
+            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            onClick={goToForDoctors}
+          >
+            สำหรับแพทย์และบุคลากร
           </button>
           <a
             href="https://github.com/peerawatkung/pijaitham"

@@ -15,3 +15,10 @@ export const APP_CONFIG = {
   /** ใช้ประกอบชื่อไฟล์ที่ดาวน์โหลด เช่น พิใจธรรม-สมศรี-20260709.pdf */
   fileSlug: 'พิใจธรรม',
 } as const
+
+/**
+ * URL หน้า "สำหรับแพทย์และบุคลากร" — ปลายทางของ QR บนการ์ดพกกระเป๋า
+ * หน้าปก PDF และใบปะหน้าเวชระเบียน (FormContext รองรับ deep link เส้นทางนี้)
+ */
+export const DOCTORS_PATH = '/doctors'
+export const DOCTORS_URL = `https://${APP_CONFIG.domain}${DOCTORS_PATH}`
