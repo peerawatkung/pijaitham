@@ -4,7 +4,7 @@ import { useForm } from '../state/FormContext'
 
 /** คู่มือ "ชวนครอบครัวคุยอย่างไร" — พร้อมดาวน์โหลดเป็น PDF ส่งต่อได้ */
 export function TalkGuide() {
-  const { goHome, goToStep } = useForm()
+  const { goHome, goToStep, goToHelpParents } = useForm()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -102,6 +102,16 @@ export function TalkGuide() {
       >
         เริ่มเขียนเจตนาของฉัน
       </button>
+      <p className="mt-4 text-center text-base leading-relaxed text-ink-soft">
+        อยากนั่งทำด้วยกันกับพ่อแม่ —{' '}
+        <button
+          type="button"
+          className="underline underline-offset-4 hover:text-ink"
+          onClick={goToHelpParents}
+        >
+          ดูคำแนะนำช่วยพ่อแม่เขียน
+        </button>
+      </p>
     </main>
   )
 }

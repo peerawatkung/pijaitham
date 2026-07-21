@@ -42,6 +42,9 @@ export default defineConfig({
       workbox: {
         // precache ทุกอย่างรวมฟอนต์และ PDF engine — เปิดครั้งเดียว ใช้ออฟไลน์ได้ครบ
         globPatterns: ['**/*.{js,css,html,svg,png,jpg,ttf,webmanifest}'],
+        // หน้าบทความเป็น HTML static ที่สร้างหลัง SW ถูก generate (scripts/build-articles.mjs)
+        // ถ้าไม่กันไว้ SW จะเสิร์ฟ index.html ของแอปทับ ทำให้เปิดบทความไม่ได้
+        navigateFallbackDenylist: [/^\/articles/],
       },
     }),
   ],

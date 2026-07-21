@@ -37,6 +37,7 @@ export function Home() {
     goToTalkGuide,
     goToResources,
     goToForDoctors,
+    goToHelpParents,
     loadAnswers,
   } = useForm()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -349,10 +350,23 @@ export function Home() {
           <button
             type="button"
             className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            onClick={goToHelpParents}
+          >
+            ช่วยพ่อแม่เขียน
+          </button>
+          <button
+            type="button"
+            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
             onClick={goToResources}
           >
             แหล่งข้อมูลเพิ่มเติม
           </button>
+          <a
+            href="/articles/"
+            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+          >
+            บทความ
+          </a>
           <button
             type="button"
             className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"

@@ -6,6 +6,7 @@ import { About } from './pages/About'
 import { Done } from './pages/Done'
 import { Faq } from './pages/Faq'
 import { ForDoctors } from './pages/ForDoctors'
+import { HelpParents } from './pages/HelpParents'
 import { Home } from './pages/Home'
 import { Resources } from './pages/Resources'
 import { Review } from './pages/Review'
@@ -38,6 +39,8 @@ function CurrentPage() {
       return <Resources />
     case 'forDoctors':
       return <ForDoctors />
+    case 'helpParents':
+      return <HelpParents />
   }
 }
 
