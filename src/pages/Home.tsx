@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import { ShareButton } from '../components/ShareButton'
 import { APP_CONFIG } from '../config/app'
 import { DraftError, readDraftFile } from '../lib/draft'
+import { clearStoredDraft, loadStoredDraft } from '../lib/draftStorage'
 import { useForm } from '../state/FormContext'
 
 const WHY_CARDS = [
@@ -30,6 +31,7 @@ const HOW_STEPS = [
 
 export function Home() {
   const {
+    answers,
     goToStep,
     goToFaq,
     goToSample,
@@ -59,6 +61,19 @@ export function Home() {
     } finally {
       setBlankBusy(false)
     }
+  }
+
+  // ร่างที่บันทึกอัตโนมัติไว้ในเครื่อง — ชวนทำต่อเมื่อยังไม่มีคำตอบใน session นี้
+  const [storedDraft, setStoredDraft] = useState(() => loadStoredDraft())
+  const showResume = storedDraft !== null && Object.keys(answers).length === 0
+  const resumeDraft = () => {
+    if (!storedDraft) return
+    loadAnswers(storedDraft.answers)
+    goToStep(0)
+  }
+  const discardDraft = () => {
+    clearStoredDraft()
+    setStoredDraft(null)
   }
 
   const handleDraftFile = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -119,6 +134,43 @@ export function Home() {
           เว็บไซต์นี้ไม่มีการเก็บข้อมูลใด ๆ ของผู้ใช้ทั้งสิ้น
         </p>
       </section>
+
+      {/* ---- ร่างที่บันทึกไว้ในเครื่อง — ชวนกลับมาทำต่อ ---- */}
+      {showResume ? (
+        <section
+          aria-label="แบบร่างที่บันทึกไว้"
+          className="mt-8 rounded-xl border border-tea-200 bg-tea-100/60 p-5 text-center"
+        >
+          <p className="text-lg leading-relaxed text-ink">
+            มีแบบร่างที่ทำค้างไว้ในเครื่องนี้
+            {storedDraft?.savedAt
+              ? ` (บันทึกเมื่อ ${new Intl.DateTimeFormat('th-TH', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                }).format(new Date(storedDraft.savedAt))})`
+              : ''}
+          </p>
+          <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <button
+              type="button"
+              className="w-full rounded-xl bg-tea-700 px-8 py-3 text-lg font-bold text-white shadow-sm transition-colors hover:bg-tea-600 focus:outline-none focus:ring-4 focus:ring-tea-600/40 sm:w-auto"
+              onClick={resumeDraft}
+            >
+              ทำต่อจากที่ค้างไว้
+            </button>
+            <button
+              type="button"
+              className="w-full rounded-xl border border-tea-200 px-8 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30 sm:w-auto"
+              onClick={discardDraft}
+            >
+              ลบร่าง เริ่มใหม่
+            </button>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+            ร่างถูกเก็บไว้ในเครื่องนี้เท่านั้น ไม่ได้ส่งไปที่ใด
+          </p>
+        </section>
+      ) : null}
 
       {/* ---- พิใจธรรมคืออะไร ---- */}
       <section className="mt-12">

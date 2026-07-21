@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ShareButton } from '../components/ShareButton'
+import { SIGN_CHECKLIST } from '../content/checklist'
 import { PDF_TEXT } from '../content/pdfText'
 import { usePdfDownload } from '../hooks/usePdfDownload'
 import { downloadErrorMessage } from '../lib/browser'
 import { exportDraft } from '../lib/draft'
+import { clearStoredDraft } from '../lib/draftStorage'
 import { downloadReviewReminder } from '../lib/reviewReminder'
 import { useForm } from '../state/FormContext'
 
@@ -47,6 +49,18 @@ export function Done() {
     }
   }, [answers])
 
+  // เช็กลิสต์ก่อนลงนาม — state ในหน้านี้เท่านั้น ไม่บันทึกที่ไหน
+  const [checkedItems, setCheckedItems] = useState<boolean[]>(() =>
+    SIGN_CHECKLIST.items.map(() => false),
+  )
+
+  // ปุ่มลบร่างจากเครื่อง — สำหรับเครื่องสาธารณะ/เครื่องที่ใช้ร่วมกับคนอื่น
+  const [draftCleared, setDraftCleared] = useState(false)
+  const handleClearDraft = () => {
+    clearStoredDraft()
+    setDraftCleared(true)
+  }
+
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [])
@@ -82,6 +96,33 @@ export function Done() {
       <p className="mt-4 rounded-xl border border-tea-200 bg-tea-100/60 p-4 text-lg leading-relaxed text-ink">
         <span aria-hidden="true">💳</span> {PDF_TEXT.appendix.afterPrintNote}
       </p>
+
+      {/* ---- เช็กลิสต์ก่อนลงนาม — ติ๊กได้เพื่อไล่เช็กทีละข้อ (ไม่บันทึกที่ไหน) ---- */}
+      <section className="mt-6 rounded-xl border border-dawn-100 bg-dawn-100/40 p-5">
+        <h2 className="text-xl font-bold text-ink">{SIGN_CHECKLIST.title}</h2>
+        <p className="mt-1 text-base leading-relaxed text-ink-soft">
+          {SIGN_CHECKLIST.intro}
+        </p>
+        <ul className="mt-4 space-y-3">
+          {SIGN_CHECKLIST.items.map((item, i) => (
+            <li key={item}>
+              <label className="flex cursor-pointer items-start gap-3 text-lg leading-relaxed text-ink">
+                <input
+                  type="checkbox"
+                  checked={checkedItems[i]}
+                  onChange={() =>
+                    setCheckedItems((prev) =>
+                      prev.map((c, j) => (j === i ? !c : c)),
+                    )
+                  }
+                  className="mt-1.5 h-5 w-5 shrink-0 accent-tea-700"
+                />
+                <span>{item}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <p className="mt-4 text-base leading-relaxed text-ink-soft">
         ขั้นตอนที่ 2 มักเป็นก้าวที่ยากที่สุด —{' '}
@@ -202,10 +243,28 @@ export function Done() {
         </div>
       </div>
 
-      <p className="mt-8 text-center text-base leading-relaxed text-ink-soft">
-        ข้อมูลของคุณยังอยู่ในหน้านี้จนกว่าจะปิดหน้าต่าง —
-        ถ้ายังไม่ได้บันทึกแบบร่าง อย่าลืมบันทึกก่อนปิด
-      </p>
+      <div className="mt-8 text-center">
+        {draftCleared ? (
+          <p className="text-base leading-relaxed text-ink-soft">
+            ลบร่างออกจากเครื่องนี้แล้ว — ข้อมูลยังอยู่ในหน้านี้จนกว่าจะปิดหน้าต่าง
+          </p>
+        ) : (
+          <>
+            <p className="text-base leading-relaxed text-ink-soft">
+              ร่างของคุณถูกบันทึกไว้ในเครื่องนี้โดยอัตโนมัติ (ไม่ได้ส่งไปที่ใด)
+              เพื่อให้กลับมาแก้ไขได้ — ถ้าใช้เครื่องสาธารณะหรือเครื่องของคนอื่น
+              แนะนำให้ลบร่างก่อนปิด
+            </p>
+            <button
+              type="button"
+              className="mt-2 text-base text-ink-soft underline underline-offset-4 hover:text-ink"
+              onClick={handleClearDraft}
+            >
+              ลบร่างออกจากเครื่องนี้
+            </button>
+          </>
+        )}
+      </div>
     </main>
   )
 }

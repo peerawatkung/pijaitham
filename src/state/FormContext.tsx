@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react'
 import type { ReactNode } from 'react'
+import { saveStoredDraft } from '../lib/draftStorage'
 import type { AnswerValue, FormAnswers } from '../types/form'
 
 /**
@@ -83,16 +84,28 @@ export function FormProvider({ children }: { children: ReactNode }) {
     setAnswers(next)
   }, [])
 
-  // ข้อมูลอยู่ใน memory เท่านั้น — เตือนก่อนปิด/refresh ถ้ามีคำตอบที่ยังไม่ได้บันทึก
+  // บันทึกร่างอัตโนมัติลง localStorage (อยู่ในเครื่องเท่านั้น) —
+  // debounce สั้น ๆ กันเขียนถี่เกินระหว่างพิมพ์
+  const [draftSaveFailed, setDraftSaveFailed] = useState(false)
   useEffect(() => {
     if (Object.keys(answers).length === 0) return
+    const timer = setTimeout(() => {
+      setDraftSaveFailed(!saveStoredDraft(answers))
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [answers])
+
+  // เตือนก่อนปิด/refresh เฉพาะเมื่อบันทึกอัตโนมัติใช้ไม่ได้ (เช่นโหมดส่วนตัว)
+  // — กรณีปกติร่างถูกเก็บในเครื่องแล้ว ปิดหน้าได้อย่างปลอดภัย
+  useEffect(() => {
+    if (!draftSaveFailed || Object.keys(answers).length === 0) return
     const warn = (e: BeforeUnloadEvent) => {
       e.preventDefault()
       e.returnValue = '' // จำเป็นสำหรับ Chrome รุ่นเก่า
     }
     window.addEventListener('beforeunload', warn)
     return () => window.removeEventListener('beforeunload', warn)
-  }, [answers])
+  }, [answers, draftSaveFailed])
 
   const goHome = useCallback(() => setPage({ name: 'home' }), [])
   const goToStep = useCallback(
