@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react'
 const SIZES = [15, 17, 19, 21]
 const DEFAULT_INDEX = 1
 
+// พื้นที่กดอย่างน้อย 44x44px ตามมาตรฐาน touch target (WCAG 2.5.5) —
+// กำหนดเป็น px ไม่ใช่ rem เพราะปุ่มนี้ปรับ font-size ของ html เอง
 const buttonClass =
-  'rounded-md px-2.5 py-1 text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-2 focus:ring-tea-600/40 disabled:opacity-35 disabled:hover:bg-transparent'
+  'inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md px-3 text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-2 focus:ring-tea-600/40 disabled:opacity-35 disabled:hover:bg-transparent'
 
 /** ปุ่มปรับขนาดตัวอักษร — ผู้ใช้สูงวัยจำนวนมากต้องการตัวหนังสือใหญ่ขึ้น */
 export function FontSizeControl() {
@@ -19,7 +21,7 @@ export function FontSizeControl() {
     <div
       role="group"
       aria-label="ปรับขนาดตัวอักษร"
-      className="flex items-center gap-0.5 rounded-lg border border-tea-200 bg-card px-1 py-0.5"
+      className="flex items-center gap-0.5 rounded-lg border border-tea-200 bg-card p-0.5"
     >
       <button
         type="button"
