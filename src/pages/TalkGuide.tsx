@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { BackLink } from '../components/BackLink'
 import { TALK_GUIDE } from '../content/talkGuide'
 import { useForm } from '../state/FormContext'
 
@@ -29,13 +30,7 @@ export function TalkGuide() {
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8">
-      <button
-        type="button"
-        className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
-        onClick={goHome}
-      >
-        กลับหน้าแรก
-      </button>
+      <BackLink onClick={goHome} />
       <h1 className="mt-4 text-2xl font-bold text-ink sm:text-3xl">
         {TALK_GUIDE.title}
       </h1>

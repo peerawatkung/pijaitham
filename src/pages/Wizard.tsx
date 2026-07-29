@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { BackLink } from '../components/BackLink'
 import { FieldRenderer } from '../components/wizard/FieldRenderer'
 import { ProgressBar } from '../components/wizard/ProgressBar'
 import { SECTIONS, TOTAL_STEPS } from '../content/questions'
@@ -27,16 +28,10 @@ export function Wizard({ step }: WizardProps) {
     <main className="mx-auto max-w-2xl px-5 py-8">
       <header className="space-y-4">
         <div className="flex items-center justify-between">
+          <BackLink onClick={goHome} />
           <button
             type="button"
-            className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
-            onClick={goHome}
-          >
-            กลับหน้าแรก
-          </button>
-          <button
-            type="button"
-            className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap text-base text-ink-soft underline underline-offset-4 hover:text-ink"
             onClick={() => exportDraft(answers)}
           >
             บันทึกแบบร่างลงเครื่อง

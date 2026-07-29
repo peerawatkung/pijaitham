@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { BackLink } from '../components/BackLink'
 import { SECTIONS } from '../content/questions'
 import { usePdfDownload } from '../hooks/usePdfDownload'
 import { exportDraft } from '../lib/draft'
@@ -24,13 +25,7 @@ export function Review() {
   return (
     <main className="mx-auto max-w-2xl px-5 py-8">
       <header className="space-y-3">
-        <button
-          type="button"
-          className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
-          onClick={goHome}
-        >
-          กลับหน้าแรก
-        </button>
+        <BackLink onClick={goHome} />
         <h1 className="text-2xl font-bold text-ink sm:text-3xl">
           ตรวจทานคำตอบของคุณ
         </h1>
@@ -52,7 +47,7 @@ export function Review() {
               </h2>
               <button
                 type="button"
-                className="shrink-0 rounded-lg border border-tea-200 px-4 py-1.5 text-base text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-2 focus:ring-tea-600/30"
+                className="inline-flex min-h-[44px] shrink-0 items-center whitespace-nowrap rounded-lg border border-tea-200 px-4 py-1.5 text-base text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-2 focus:ring-tea-600/30"
                 onClick={() => goToStep(index)}
               >
                 แก้ไข

@@ -106,7 +106,7 @@ export function Done() {
         <ul className="mt-4 space-y-3">
           {SIGN_CHECKLIST.items.map((item, i) => (
             <li key={item}>
-              <label className="flex cursor-pointer items-start gap-3 text-lg leading-relaxed text-ink">
+              <label className="-mx-2 flex min-h-[44px] cursor-pointer items-start gap-3 rounded-lg px-2 py-2.5 text-lg leading-relaxed text-ink transition-colors hover:bg-tea-100/50">
                 <input
                   type="checkbox"
                   checked={checkedItems[i]}
@@ -228,14 +228,14 @@ export function Done() {
         <div className="flex justify-center gap-8 pt-4">
           <button
             type="button"
-            className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap text-base text-ink-soft underline underline-offset-4 hover:text-ink"
             onClick={goToReview}
           >
             กลับไปตรวจทาน/แก้ไข
           </button>
           <button
             type="button"
-            className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap text-base text-ink-soft underline underline-offset-4 hover:text-ink"
             onClick={goHome}
           >
             กลับหน้าแรก
@@ -257,7 +257,7 @@ export function Done() {
             </p>
             <button
               type="button"
-              className="mt-2 text-base text-ink-soft underline underline-offset-4 hover:text-ink"
+              className="mt-2 inline-flex min-h-[44px] items-center whitespace-nowrap text-base text-ink-soft underline underline-offset-4 hover:text-ink"
               onClick={handleClearDraft}
             >
               ลบร่างออกจากเครื่องนี้

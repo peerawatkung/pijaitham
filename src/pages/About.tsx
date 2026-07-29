@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { BackLink } from '../components/BackLink'
 import { ShareButton } from '../components/ShareButton'
 import { APP_CONFIG } from '../config/app'
 import { ABOUT_BLOCKS, ABOUT_TITLE } from '../content/about'
@@ -51,13 +52,7 @@ export function About() {
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8">
-      <button
-        type="button"
-        className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
-        onClick={goHome}
-      >
-        กลับหน้าแรก
-      </button>
+      <BackLink onClick={goHome} />
       <h1 className="mt-4 text-2xl font-bold text-ink sm:text-3xl">
         {ABOUT_TITLE}
       </h1>
@@ -91,7 +86,7 @@ export function About() {
         </p>
         <a
           href={`mailto:${APP_CONFIG.contactEmail}`}
-          className="mt-1 inline-block text-lg font-bold text-tea-700 underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+          className="mt-1 inline-flex min-h-[44px] items-center text-lg font-bold text-tea-700 underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
         >
           {APP_CONFIG.contactEmail}
         </a>

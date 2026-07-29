@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { BackLink } from '../components/BackLink'
 import {
   FOR_DOCTORS_LEAD,
   FOR_DOCTORS_NOTE,
@@ -21,13 +22,7 @@ export function ForDoctors() {
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8">
-      <button
-        type="button"
-        className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
-        onClick={goHome}
-      >
-        กลับหน้าแรก
-      </button>
+      <BackLink onClick={goHome} />
       <h1 className="mt-4 text-2xl font-bold text-ink sm:text-3xl">
         {FOR_DOCTORS_TITLE}
       </h1>
@@ -78,7 +73,7 @@ export function ForDoctors() {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-lg font-bold text-tea-700 underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+                className="inline-flex min-h-[44px] items-center text-lg font-bold text-tea-700 underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
               >
                 {link.name}
               </a>

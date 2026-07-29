@@ -380,48 +380,48 @@ export function Home() {
         >
           <button
             type="button"
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
             onClick={goToAbout}
           >
             ทำไมต้องมีพิใจธรรม
           </button>
           <button
             type="button"
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
             onClick={goToFaq}
           >
             คำถามพบบ่อย
           </button>
           <button
             type="button"
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
             onClick={goToTalkGuide}
           >
             คู่มือชวนครอบครัวคุย
           </button>
           <button
             type="button"
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
             onClick={goToHelpParents}
           >
             ช่วยพ่อแม่เขียน
           </button>
           <button
             type="button"
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
             onClick={goToResources}
           >
             แหล่งข้อมูลเพิ่มเติม
           </button>
           <a
             href="/articles/"
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
           >
             บทความ
           </a>
           <button
             type="button"
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
             onClick={goToForDoctors}
           >
             สำหรับแพทย์และบุคลากร
@@ -430,7 +430,7 @@ export function Home() {
             href="https://github.com/peerawatkung/pijaitham"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
           >
             โค้ดเปิดเผยทั้งหมด (GitHub)
           </a>
@@ -442,7 +442,7 @@ export function Home() {
           ติดต่อ:{' '}
           <a
             href={`mailto:${APP_CONFIG.contactEmail}`}
-            className="underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
+            className="inline-flex min-h-[44px] items-center whitespace-nowrap underline decoration-tea-200 underline-offset-4 transition-colors hover:decoration-tea-600"
           >
             {APP_CONFIG.contactEmail}
           </a>

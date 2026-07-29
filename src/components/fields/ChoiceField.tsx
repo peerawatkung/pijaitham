@@ -72,7 +72,7 @@ export function ChoiceField({ field, value, onChange }: ChoiceFieldProps) {
       {value ? (
         <button
           type="button"
-          className="text-base text-ink-soft underline underline-offset-4 hover:text-ink"
+          className="inline-flex min-h-[44px] items-center whitespace-nowrap text-base text-ink-soft underline underline-offset-4 hover:text-ink"
           onClick={() => onChange(undefined)}
         >
           ขอคิดดูก่อน (ล้างคำตอบข้อนี้)

@@ -56,12 +56,12 @@ export function App() {
         ) : (
           <button
             type="button"
-            className="flex items-center gap-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-600/40"
+            className="flex min-h-[44px] items-center gap-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-600/40"
             onClick={goHome}
             aria-label="กลับหน้าแรก พิใจธรรม"
           >
             <Logo size={34} />
-            <span className="text-lg font-bold text-tea-700">
+            <span className="whitespace-nowrap text-lg font-bold text-tea-700">
               {APP_CONFIG.name}
             </span>
           </button>
