@@ -1,10 +1,11 @@
 /**
- * บันทึก/เปิดแบบร่างเป็นไฟล์ .json ฝั่ง client ล้วน
+ * Schema + validation ของแบบร่าง — ใช้ร่วมกันโดย autosave ในเครื่อง
+ * (lib/draftStorage.ts) และโหมดเก็บออนไลน์แบบเข้ารหัส (lib/cloudDoc.ts)
  * - schema versioned: { version, savedAt, data } (นิยามใน types/form.ts)
  * - validation เข้มงวด: รับเฉพาะ field id ที่รู้จัก และค่าที่ตรงชนิดคำถามเท่านั้น
- *   (กันไฟล์เสียหรือถูกแก้ ทำให้แอป crash หรือ state เพี้ยน)
+ *   (กันข้อมูลเสียหรือถูกแก้ ทำให้แอป crash หรือ state เพี้ยน)
+ * (การบันทึกเป็นไฟล์ .json ถูกถอดออกเมื่อ 2026-08-25 — ใช้เก็บออนไลน์แทน)
  */
-import { APP_CONFIG } from '../config/app'
 import { SECTIONS } from '../content/questions'
 import type { FieldDef } from '../content/questions'
 import { DRAFT_VERSION } from '../types/form'
@@ -14,7 +15,6 @@ import type {
   FormAnswers,
   PersonAnswer,
 } from '../types/form'
-import { safeFileSlug, shareOrDownload, ymd } from './download'
 
 /** ข้อผิดพลาดที่แสดงต่อผู้ใช้ได้โดยตรง (ข้อความภาษาไทย) */
 export class DraftError extends Error {}
@@ -125,27 +125,10 @@ export function parseDraft(text: string): FormAnswers {
   return answers
 }
 
-/** อ่านไฟล์แบบร่างที่ผู้ใช้เลือก */
-export async function readDraftFile(file: File): Promise<FormAnswers> {
-  const text = await file.text()
-  return parseDraft(text)
-}
-
 export function buildDraftFile(answers: FormAnswers): DraftFile {
   return {
     version: DRAFT_VERSION,
     savedAt: new Date().toISOString(),
     data: answers,
   }
-}
-
-/** บันทึกแบบร่างเป็นไฟล์ .json ลงเครื่องผู้ใช้ */
-export function exportDraft(answers: FormAnswers): void {
-  const draft = buildDraftFile(answers)
-  const blob = new Blob([JSON.stringify(draft, null, 2)], {
-    type: 'application/json',
-  })
-  const name = typeof answers['fullName'] === 'string' ? answers['fullName'] : ''
-  const fileName = `${APP_CONFIG.fileSlug}-แบบร่าง-${safeFileSlug(name.trim()) || 'เอกสาร'}-${ymd()}.json`
-  void shareOrDownload(blob, fileName)
 }

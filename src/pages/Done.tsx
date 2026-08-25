@@ -5,7 +5,6 @@ import { NEXT_STEPS, SIGN_CHECKLIST } from '../content/checklist'
 import { PDF_TEXT } from '../content/pdfText'
 import { usePdfDownload } from '../hooks/usePdfDownload'
 import { downloadErrorMessage } from '../lib/browser'
-import { exportDraft } from '../lib/draft'
 import { clearStoredDraft } from '../lib/draftStorage'
 import { downloadReviewReminder } from '../lib/reviewReminder'
 import { useForm } from '../state/FormContext'
@@ -141,7 +140,7 @@ export function Done() {
         <p className="text-base leading-relaxed text-ink">
           แนะนำให้ทบทวนเอกสารทุก 1 ปี หรือเมื่อสุขภาพหรือชีวิตเปลี่ยนแปลงสำคัญ
           — หากจัดทำฉบับใหม่ ฉบับที่มีวันที่ล่าสุดจะมีผลเหนือฉบับเก่า
-          เก็บไฟล์แบบร่าง (.json) หรือเก็บออนไลน์ไว้
+          เก็บออนไลน์ไว้ (อีเมล + รหัสผ่าน)
           จะช่วยให้กลับมาแก้ไขได้โดยไม่ต้องเริ่มใหม่
         </p>
       </div>
@@ -203,13 +202,6 @@ export function Done() {
             {letterError}
           </p>
         ) : null}
-        <button
-          type="button"
-          className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
-          onClick={() => exportDraft(answers)}
-        >
-          ดาวน์โหลดแบบร่าง (.json) ไว้แก้ไขภายหลัง
-        </button>
         <button
           type="button"
           className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"

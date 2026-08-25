@@ -24,7 +24,7 @@
 src/content/questions.ts   # คำถามทั้ง 7 ส่วน (single source of truth)
 src/content/pdfText.ts     # ข้อความคงที่ใน PDF (หน้าลงนาม ภาคผนวก)
 src/lib/pdf/generator.ts   # PDF layout engine
-src/lib/draft.ts           # บันทึก/เปิดแบบร่าง .json + validation
+src/lib/draft.ts           # schema + validation ของแบบร่าง (ใช้โดย autosave และโหมดออนไลน์)
 src/lib/e2ee.ts            # เข้ารหัส E2E ฝั่ง client (PBKDF2 + AES-256-GCM)
 src/lib/cloudDoc.ts        # client โหมดเก็บออนไลน์ (บันทึก/เปิด/เขียนทับ/ลบ)
 functions/api/             # Cloudflare Pages Functions — เก็บ ciphertext ลง KV

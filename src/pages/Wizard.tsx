@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BackLink } from '../components/BackLink'
+import { CloudSaveCard } from '../components/CloudSaveCard'
 import { FieldRenderer } from '../components/wizard/FieldRenderer'
 import { ProgressBar } from '../components/wizard/ProgressBar'
 import { SECTIONS, TOTAL_STEPS } from '../content/questions'
-import { exportDraft } from '../lib/draft'
 import { useForm } from '../state/FormContext'
 
 interface WizardProps {
@@ -14,6 +14,8 @@ export function Wizard({ step }: WizardProps) {
   const { answers, setAnswer, goHome, goToStep, goToReview } = useForm()
   const section = SECTIONS[step]
   const headingRef = useRef<HTMLHeadingElement>(null)
+  // แผงบันทึกแบบร่างออนไลน์ (อีเมล+รหัสผ่าน) — เปิด/ปิดได้จากปุ่มมุมขวาบน
+  const [showDraftSave, setShowDraftSave] = useState(false)
 
   // เปลี่ยน step แล้วเลื่อนขึ้นบนสุด + ย้าย focus ไปหัวข้อ เพื่อ screen reader รับรู้
   useEffect(() => {
@@ -31,12 +33,16 @@ export function Wizard({ step }: WizardProps) {
           <BackLink onClick={goHome} />
           <button
             type="button"
+            aria-expanded={showDraftSave}
             className="inline-flex min-h-[44px] items-center whitespace-nowrap text-base text-ink-soft underline underline-offset-4 hover:text-ink"
-            onClick={() => exportDraft(answers)}
+            onClick={() => setShowDraftSave((prev) => !prev)}
           >
-            บันทึกแบบร่างลงเครื่อง
+            {showDraftSave ? 'ซ่อนการบันทึกแบบร่าง' : 'บันทึกแบบร่างออนไลน์'}
           </button>
         </div>
+        {showDraftSave ? (
+          <CloudSaveCard answers={answers} variant="draft" />
+        ) : null}
         <ProgressBar current={step} />
         <h1
           ref={headingRef}

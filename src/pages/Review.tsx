@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { BackLink } from '../components/BackLink'
 import { SECTIONS } from '../content/questions'
-import { exportDraft } from '../lib/draft'
 import { formatAnswer } from '../lib/formatAnswer'
 import { useForm } from '../state/FormContext'
 
@@ -78,20 +77,13 @@ export function Review() {
       </div>
 
       {/* ---- เสร็จแล้ว → ไปเลือกวิธีเก็บ (ออนไลน์ / กระดาษ) เป็นขั้นถัดไป ---- */}
-      <div className="mt-10 space-y-3">
+      <div className="mt-10">
         <button
           type="button"
           className="w-full rounded-xl bg-tea-700 px-8 py-4 text-xl font-bold text-white shadow-sm transition-colors hover:bg-tea-600 focus:outline-none focus:ring-4 focus:ring-tea-600/40"
           onClick={goToStoreChoice}
         >
           ถัดไป: เลือกวิธีเก็บเอกสาร
-        </button>
-        <button
-          type="button"
-          className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
-          onClick={() => exportDraft(answers)}
-        >
-          ดาวน์โหลดแบบร่าง (.json) ไว้ทำต่อภายหลัง
         </button>
       </div>
     </main>

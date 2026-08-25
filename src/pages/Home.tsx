@@ -1,8 +1,6 @@
-import { useRef, useState } from 'react'
-import type { ChangeEvent } from 'react'
+import { useState } from 'react'
 import { ShareButton } from '../components/ShareButton'
 import { APP_CONFIG } from '../config/app'
-import { DraftError, readDraftFile } from '../lib/draft'
 import { clearStoredDraft, loadStoredDraft } from '../lib/draftStorage'
 import { useForm } from '../state/FormContext'
 
@@ -43,8 +41,6 @@ export function Home() {
     goToOpenCloud,
     loadAnswers,
   } = useForm()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [importError, setImportError] = useState<string | null>(null)
   const [blankBusy, setBlankBusy] = useState(false)
   const [blankError, setBlankError] = useState<string | null>(null)
 
@@ -75,24 +71,6 @@ export function Home() {
   const discardDraft = () => {
     clearStoredDraft()
     setStoredDraft(null)
-  }
-
-  const handleDraftFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    e.target.value = '' // ให้เลือกไฟล์เดิมซ้ำได้หลังแก้ไข
-    if (!file) return
-    setImportError(null)
-    try {
-      const answers = await readDraftFile(file)
-      loadAnswers(answers)
-      goToStep(0)
-    } catch (err) {
-      setImportError(
-        err instanceof DraftError
-          ? err.message
-          : 'เปิดไฟล์ไม่สำเร็จ กรุณาลองอีกครั้ง',
-      )
-    }
   }
 
   return (
@@ -342,45 +320,16 @@ export function Home() {
           ) : null}
         </div>
 
-        {/* ---- ทำต่อจากครั้งก่อน (เดิมคือ "เปิดแบบร่างจากไฟล์") ---- */}
+        {/* ---- เปิดเอกสาร/แบบร่างที่เก็บออนไลน์ไว้ (โหมดอิเล็กทรอนิกส์) ---- */}
         <div className="mt-6 rounded-xl border border-tea-200 bg-card p-5">
           <h3 className="text-lg font-bold text-ink">
-            เคยทำค้างไว้ กลับมาทำต่อได้
+            เคยเก็บเอกสารหรือแบบร่างออนไลน์ไว้
           </h3>
           <p className="mt-1 text-base leading-relaxed text-ink">
-            ถ้าเคยกด &ldquo;บันทึกแบบร่างลงเครื่อง&rdquo; ไว้
-            เพียงเลือกไฟล์นั้น — คำตอบเดิมจะกลับมาครบทุกข้อ
-          </p>
-          <button
-            type="button"
-            className="mt-3 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            เลือกไฟล์ที่บันทึกไว้ เพื่อทำต่อ
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json,application/json"
-            className="hidden"
-            aria-label="เลือกไฟล์แบบร่างที่บันทึกไว้"
-            onChange={(e) => void handleDraftFile(e)}
-          />
-          {importError ? (
-            <p role="alert" className="mt-2 text-lg text-red-700">
-              {importError}
-            </p>
-          ) : null}
-        </div>
-
-        {/* ---- เปิดเอกสารที่เก็บออนไลน์ไว้ (โหมดอิเล็กทรอนิกส์) ---- */}
-        <div className="mt-6 rounded-xl border border-tea-200 bg-card p-5">
-          <h3 className="text-lg font-bold text-ink">
-            เคยเก็บเอกสารออนไลน์ไว้
-          </h3>
-          <p className="mt-1 text-base leading-relaxed text-ink">
-            ถ้าเคยเลือก &ldquo;เก็บแบบออนไลน์&rdquo; ไว้
-            เปิดได้จากทุกเครื่องด้วยอีเมลและรหัสผ่านของคุณ
+            ถ้าเคยกด &ldquo;เก็บแบบออนไลน์&rdquo; หรือ
+            &ldquo;บันทึกแบบร่างออนไลน์&rdquo; ไว้
+            เปิดได้จากทุกเครื่องด้วยอีเมลและรหัสผ่านของคุณ —
+            คำตอบเดิมจะกลับมาครบทุกข้อ
           </p>
           <button
             type="button"

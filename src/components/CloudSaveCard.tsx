@@ -14,19 +14,41 @@ type Busy = 'save' | 'overwrite' | 'delete' | null
 
 const EMAIL_PATTERN = /^\S+@\S+\.\S+$/
 
+/** ถ้อยคำตามบริบท: เก็บเอกสารฉบับเสร็จ vs บันทึกแบบร่างกลางทาง (กลไกเดียวกัน) */
+const COPY = {
+  document: {
+    title: 'เก็บแบบออนไลน์ (อิเล็กทรอนิกส์)',
+    thing: 'เอกสาร',
+    successTitle: 'เก็บขึ้นเซิร์ฟเวอร์เรียบร้อยแล้ว ✓',
+    successHint: 'เปิดจากเครื่องไหนก็ได้ด้วย',
+  },
+  draft: {
+    title: 'บันทึกแบบร่างออนไลน์',
+    thing: 'แบบร่าง',
+    successTitle: 'บันทึกแบบร่างเรียบร้อยแล้ว ✓',
+    successHint: 'กลับมาทำต่อจากเครื่องไหนก็ได้ด้วย',
+  },
+} as const
+
 /**
- * การ์ด "เก็บแบบออนไลน์ (อิเล็กทรอนิกส์)" — ใช้ในหน้าตรวจทานและหน้าขั้นตอนถัดไป
+ * การ์ด "เก็บแบบออนไลน์ (อิเล็กทรอนิกส์)" — ใช้ในหน้าเลือกวิธีเก็บ หน้าขั้นตอนถัดไป
+ * และ (variant "draft") ปุ่มบันทึกแบบร่างระหว่างกรอกฟอร์ม
  * ระบุเอกสารด้วย อีเมล + รหัสผ่าน — derive เป็นกุญแจ/ตำแหน่งในเครื่องผู้ใช้
  * (อีเมลและรหัสผ่านไม่ถูกส่งขึ้นเซิร์ฟเวอร์ — ดู lib/e2ee.ts)
+ * แบบร่างและฉบับเสร็จใช้ช่องเก็บเดียวกันต่ออีเมล+รหัสผ่านหนึ่งชุด —
+ * บันทึกครั้งถัดไปทับของเดิมเสมอ จึงได้ฉบับล่าสุดฉบับเดียวไม่สับสน
  */
 export function CloudSaveCard({
   answers,
   onGoNext,
+  variant = 'document',
 }: {
   answers: FormAnswers
   /** ปุ่ม "ไปดูขั้นตอนถัดไป" หลังบันทึกสำเร็จ (ใช้ในหน้าตรวจทาน) */
   onGoNext?: () => void
+  variant?: keyof typeof COPY
 }) {
+  const copy = COPY[variant]
   const [email, setEmail] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -122,12 +144,11 @@ export function CloudSaveCard({
 
   return (
     <div className="rounded-xl border border-tea-200 bg-card p-5">
-      <h3 className="text-xl font-bold text-ink">
-        เก็บแบบออนไลน์ (อิเล็กทรอนิกส์)
-      </h3>
+      <h3 className="text-xl font-bold text-ink">{copy.title}</h3>
       <p className="mt-2 text-base leading-relaxed text-ink">
-        ใช้แค่ <strong>อีเมล + รหัสผ่าน</strong> เปิดเอกสารได้จากทุกเครื่อง —
-        เอกสารถูก<strong>เข้ารหัสในเครื่องของคุณก่อน</strong>ส่งขึ้นเซิร์ฟเวอร์
+        ใช้แค่ <strong>อีเมล + รหัสผ่าน</strong> เปิด{copy.thing}
+        ได้จากทุกเครื่อง — {copy.thing}ถูก
+        <strong>เข้ารหัสในเครื่องของคุณก่อน</strong>ส่งขึ้นเซิร์ฟเวอร์
         แม้แต่อีเมลก็ไม่ถูกส่งไป เซิร์ฟเวอร์จึงเก็บได้เพียงข้อมูลที่อ่านไม่ออก
         ไม่มีใครถอดได้หากไม่มีรหัสผ่านของคุณ (รวมถึงผู้พัฒนาเว็บนี้)
       </p>
@@ -136,11 +157,10 @@ export function CloudSaveCard({
       {savedAs ? (
         <div className="mt-4 rounded-xl border border-tea-200 bg-tea-100/60 p-4">
           <p className="text-center text-base font-bold text-ink">
-            เก็บขึ้นเซิร์ฟเวอร์เรียบร้อยแล้ว ✓
+            {copy.successTitle}
           </p>
           <p className="mt-1 text-center text-lg leading-relaxed text-ink">
-            เปิดจากเครื่องไหนก็ได้ด้วย <strong>{savedAs}</strong>{' '}
-            และรหัสผ่านที่ตั้งไว้
+            {copy.successHint} <strong>{savedAs}</strong> และรหัสผ่านที่ตั้งไว้
           </p>
           <ul className="mt-3 list-disc space-y-1 pl-6 text-left text-base leading-relaxed text-ink">
             <li>

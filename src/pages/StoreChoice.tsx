@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { BackLink } from '../components/BackLink'
 import { CloudSaveCard } from '../components/CloudSaveCard'
 import { usePdfDownload } from '../hooks/usePdfDownload'
-import { exportDraft } from '../lib/draft'
 import { useForm } from '../state/FormContext'
 
 /**
@@ -69,14 +68,6 @@ export function StoreChoice() {
             </p>
           ) : null}
         </section>
-
-        <button
-          type="button"
-          className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
-          onClick={() => exportDraft(answers)}
-        >
-          ดาวน์โหลดแบบร่าง (.json) ไว้ทำต่อภายหลัง
-        </button>
 
         <p className="text-center text-base leading-relaxed text-ink-soft">
           เก็บเรียบร้อยแล้ว?{' '}
