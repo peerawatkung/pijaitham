@@ -26,6 +26,7 @@ export type Page =
   | { name: 'forDoctors' }
   | { name: 'helpParents' }
   | { name: 'openCloud' }
+  | { name: 'storeChoice' }
 
 interface FormContextValue {
   answers: FormAnswers
@@ -45,6 +46,7 @@ interface FormContextValue {
   goToForDoctors: () => void
   goToHelpParents: () => void
   goToOpenCloud: () => void
+  goToStoreChoice: () => void
 }
 
 const FormContext = createContext<FormContextValue | null>(null)
@@ -127,6 +129,10 @@ export function FormProvider({ children }: { children: ReactNode }) {
     [],
   )
   const goToOpenCloud = useCallback(() => setPage({ name: 'openCloud' }), [])
+  const goToStoreChoice = useCallback(
+    () => setPage({ name: 'storeChoice' }),
+    [],
+  )
 
   return (
     <FormContext.Provider
@@ -147,6 +153,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
         goToForDoctors,
         goToHelpParents,
         goToOpenCloud,
+        goToStoreChoice,
       }}
     >
       {children}

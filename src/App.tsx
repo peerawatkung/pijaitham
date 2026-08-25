@@ -12,6 +12,7 @@ import { OpenCloud } from './pages/OpenCloud'
 import { Resources } from './pages/Resources'
 import { Review } from './pages/Review'
 import { Sample } from './pages/Sample'
+import { StoreChoice } from './pages/StoreChoice'
 import { TalkGuide } from './pages/TalkGuide'
 import { Wizard } from './pages/Wizard'
 import { useForm } from './state/FormContext'
@@ -44,6 +45,8 @@ function CurrentPage() {
       return <HelpParents />
     case 'openCloud':
       return <OpenCloud />
+    case 'storeChoice':
+      return <StoreChoice />
   }
 }
 
