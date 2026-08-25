@@ -8,6 +8,7 @@ import { Faq } from './pages/Faq'
 import { ForDoctors } from './pages/ForDoctors'
 import { HelpParents } from './pages/HelpParents'
 import { Home } from './pages/Home'
+import { OpenCloud } from './pages/OpenCloud'
 import { Resources } from './pages/Resources'
 import { Review } from './pages/Review'
 import { Sample } from './pages/Sample'
@@ -41,6 +42,8 @@ function CurrentPage() {
       return <ForDoctors />
     case 'helpParents':
       return <HelpParents />
+    case 'openCloud':
+      return <OpenCloud />
   }
 }
 

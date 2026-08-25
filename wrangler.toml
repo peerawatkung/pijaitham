@@ -1,0 +1,17 @@
+# Cloudflare Pages config — โปรเจกต์ acp-booklet (pijaitham.com)
+#
+# โหมด "เก็บออนไลน์" ต้องผูก KV namespace ชื่อ binding `DOCS` ก่อน deploy:
+#   1) สร้าง namespace ครั้งเดียว:  npx wrangler kv namespace create DOCS
+#   2) เอาค่า id ที่ได้มาใส่แทน REPLACE_WITH_KV_NAMESPACE_ID ด้านล่าง
+#   3) deploy ตามปกติ:            npm run build && npx wrangler pages deploy
+#
+# ถ้ายังไม่ผูก KV เว็บส่วนอื่นทำงานปกติ — เฉพาะโหมดเก็บออนไลน์จะแจ้งว่า
+# "ยังไม่เปิดใช้งานบนเซิร์ฟเวอร์นี้" (API ตอบ 503)
+
+name = "acp-booklet"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-08-18"
+
+[[kv_namespaces]]
+binding = "DOCS"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

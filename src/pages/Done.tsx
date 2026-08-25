@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { CloudSaveCard } from '../components/CloudSaveCard'
 import { ShareButton } from '../components/ShareButton'
 import { SIGN_CHECKLIST } from '../content/checklist'
 import { PDF_TEXT } from '../content/pdfText'
@@ -71,8 +72,9 @@ export function Done() {
         เอกสารของคุณพร้อมแล้ว
       </h1>
       <p className="mt-3 text-lg leading-relaxed text-ink-soft">
-        ไฟล์ PDF ถูกบันทึกลงเครื่องของคุณแล้ว
         การเขียนถึงตรงนี้คือก้าวที่มีความหมายมาก —
+        ไม่ว่าคุณจะเก็บเป็นไฟล์ในเครื่องเพื่อพิมพ์เป็นกระดาษ
+        หรือเก็บออนไลน์ไว้เปิดได้ทุกที่
         ขั้นตอนต่อจากนี้จะทำให้เจตนาของคุณมีผลจริง
       </p>
 
@@ -139,8 +141,14 @@ export function Done() {
         <p className="text-base leading-relaxed text-ink">
           แนะนำให้ทบทวนเอกสารทุก 1 ปี หรือเมื่อสุขภาพหรือชีวิตเปลี่ยนแปลงสำคัญ
           — หากจัดทำฉบับใหม่ ฉบับที่มีวันที่ล่าสุดจะมีผลเหนือฉบับเก่า
-          เก็บไฟล์แบบร่าง (.json) ไว้ จะช่วยให้กลับมาแก้ไขได้โดยไม่ต้องเริ่มใหม่
+          เก็บไฟล์แบบร่าง (.json) หรือเก็บออนไลน์ไว้
+          จะช่วยให้กลับมาแก้ไขได้โดยไม่ต้องเริ่มใหม่
         </p>
+      </div>
+
+      {/* ---- โหมดที่ 2: เก็บบนเซิร์ฟเวอร์แบบเข้ารหัส เปิดได้จากทุกเครื่อง ---- */}
+      <div className="mt-8">
+        <CloudSaveCard answers={answers} />
       </div>
 
       <div className="mt-8 space-y-3">

@@ -24,7 +24,7 @@ const WHY_CARDS = [
 // ขั้นที่ 3–4 ให้สอดคล้องกับ "ขั้นตอนหลังพิมพ์เอกสาร" ในหน้า Done (pdfText.appendix.afterPrintSteps)
 const HOW_STEPS = [
   'ตอบคำถามทีละข้อ ตามจังหวะของคุณ — ข้อไหนยังไม่พร้อม ข้ามได้',
-  'ตรวจทาน แล้วดาวน์โหลดเป็น PDF พร้อมพิมพ์',
+  'ตรวจทาน แล้วเลือกวิธีเก็บ — ดาวน์โหลด PDF ไปพิมพ์ หรือเก็บออนไลน์แบบเข้ารหัส',
   'พิมพ์ ลงชื่อพร้อมพยาน 2 คน แล้วบอกครอบครัวว่าทำเอกสารนี้ไว้',
   'มอบสำเนาให้ผู้ตัดสินใจแทนและแพทย์ประจำตัว เก็บต้นฉบับไว้ในที่หาง่าย',
 ] as const
@@ -40,6 +40,7 @@ export function Home() {
     goToResources,
     goToForDoctors,
     goToHelpParents,
+    goToOpenCloud,
     loadAnswers,
   } = useForm()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -131,7 +132,7 @@ export function Home() {
             <rect x="4" y="11" width="16" height="10" rx="2" />
             <path d="M8 11V7a4 4 0 0 1 8 0v4" />
           </svg>
-          เว็บไซต์นี้ไม่มีการเก็บข้อมูลใด ๆ ของผู้ใช้ทั้งสิ้น
+          ข้อมูลของคุณเป็นความลับ — ไม่มีใครอ่านได้นอกจากคุณ
         </p>
       </section>
 
@@ -287,14 +288,24 @@ export function Home() {
           คำมั่นเรื่องความเป็นส่วนตัว
         </h2>
         <p className="mt-2 text-base font-bold leading-relaxed text-ink">
-          {APP_CONFIG.name}ไม่มีการเก็บข้อมูลใด ๆ ของผู้ใช้ทั้งสิ้น —
-          ทุกตัวอักษรที่คุณพิมพ์อยู่ในเครื่องของคุณเท่านั้น
-          และไม่มีใครเห็นนอกจากคุณ
+          ทุกตัวอักษรที่คุณพิมพ์ประมวลผลในเครื่องของคุณ
+          และไม่มีใครอ่านเนื้อหาได้นอกจากคุณ — แม้ในโหมดเก็บออนไลน์
         </p>
         <ul className="mt-2 list-disc space-y-1 pl-6 text-base leading-relaxed text-ink">
-          <li>ทุกอย่างเกิดขึ้นในเครื่องของคุณ — ไม่มีข้อมูลใดถูกส่งออกไปที่ใด</li>
-          <li>ไม่มีบัญชีผู้ใช้ ไม่มีการล็อกอิน ไม่มีการเก็บข้อมูลบนเซิร์ฟเวอร์</li>
-          <li>ปิดหน้านี้เมื่อไร ข้อมูลก็หายไปทันที เว้นแต่คุณบันทึกไฟล์เก็บไว้เอง</li>
+          <li>
+            ค่าเริ่มต้น: ทุกอย่างเกิดขึ้นในเครื่องของคุณ —
+            ไม่มีข้อมูลใดถูกส่งออกไปที่ใด
+          </li>
+          <li>
+            ถ้าคุณเลือก &ldquo;เก็บออนไลน์&rdquo;
+            เอกสารจะถูกเข้ารหัสในเครื่องของคุณก่อนส่งขึ้นเซิร์ฟเวอร์ —
+            เซิร์ฟเวอร์เก็บได้เพียงข้อมูลที่อ่านไม่ออก
+            ถอดรหัสได้ด้วยรหัสผ่านของคุณเท่านั้น (ผู้พัฒนาก็อ่านไม่ได้)
+          </li>
+          <li>
+            ไม่มีบัญชีผู้ใช้ ไม่มีการล็อกอิน — เอกสารออนไลน์ลบได้ทุกเมื่อ
+            และลบตัวเองอัตโนมัติเมื่อไม่ได้เปิดเกิน 1 ปี
+          </li>
         </ul>
       </section>
 
@@ -360,6 +371,24 @@ export function Home() {
               {importError}
             </p>
           ) : null}
+        </div>
+
+        {/* ---- เปิดเอกสารที่เก็บออนไลน์ไว้ (โหมดอิเล็กทรอนิกส์) ---- */}
+        <div className="mt-6 rounded-xl border border-tea-200 bg-card p-5">
+          <h3 className="text-lg font-bold text-ink">
+            เคยเก็บเอกสารออนไลน์ไว้
+          </h3>
+          <p className="mt-1 text-base leading-relaxed text-ink">
+            ถ้าเคยเลือก &ldquo;เก็บแบบออนไลน์&rdquo; ไว้
+            เปิดได้จากทุกเครื่องด้วยรหัสเอกสารและรหัสผ่านของคุณ
+          </p>
+          <button
+            type="button"
+            className="mt-3 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
+            onClick={goToOpenCloud}
+          >
+            เปิดด้วยรหัสเอกสาร
+          </button>
         </div>
       </section>
 

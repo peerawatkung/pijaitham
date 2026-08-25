@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { BackLink } from '../components/BackLink'
+import { CloudSaveCard } from '../components/CloudSaveCard'
 import { SECTIONS } from '../content/questions'
 import { usePdfDownload } from '../hooks/usePdfDownload'
 import { exportDraft } from '../lib/draft'
@@ -84,27 +85,47 @@ export function Review() {
         ))}
       </div>
 
-      <div className="mt-10 space-y-3">
-        <button
-          type="button"
-          disabled={generating}
-          className="w-full rounded-xl bg-tea-700 px-8 py-4 text-xl font-bold text-white shadow-sm transition-colors hover:bg-tea-600 focus:outline-none focus:ring-4 focus:ring-tea-600/40 disabled:cursor-wait disabled:opacity-60"
-          onClick={() => void handleDownloadPdf()}
-        >
-          {generating ? 'กำลังสร้างเอกสาร...' : 'ดาวน์โหลด PDF'}
-        </button>
-        {pdfError ? (
-          <p role="alert" className="text-center text-lg text-red-700">
-            {pdfError}
-          </p>
-        ) : null}
-        <button
-          type="button"
-          className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
-          onClick={() => exportDraft(answers)}
-        >
-          ดาวน์โหลดแบบร่าง (.json) ไว้ทำต่อภายหลัง
-        </button>
+      {/* ---- เลือกวิธีเก็บเอกสาร: กระดาษ / ออนไลน์ — ใช้คู่กันได้ ---- */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold text-ink">เลือกวิธีเก็บเอกสารของคุณ</h2>
+        <p className="mt-2 text-lg leading-relaxed text-ink-soft">
+          เลือกแบบใดแบบหนึ่ง หรือทั้งสองแบบคู่กันก็ได้
+        </p>
+
+        <div className="mt-4 space-y-4">
+          <div className="rounded-xl border border-tea-200 bg-card p-5">
+            <h3 className="text-xl font-bold text-ink">
+              เก็บเป็นไฟล์ในเครื่อง แล้วพิมพ์เป็นกระดาษ
+            </h3>
+            <p className="mt-2 text-base leading-relaxed text-ink">
+              ดาวน์โหลด PDF ลงเครื่อง แล้วพิมพ์ไปลงนามพร้อมพยาน —
+              ฉบับกระดาษที่ลงนามแล้วคือฉบับที่ใช้ยื่นโรงพยาบาลได้ทันที
+            </p>
+            <button
+              type="button"
+              disabled={generating}
+              className="mt-3 w-full rounded-xl bg-tea-700 px-8 py-4 text-xl font-bold text-white shadow-sm transition-colors hover:bg-tea-600 focus:outline-none focus:ring-4 focus:ring-tea-600/40 disabled:cursor-wait disabled:opacity-60"
+              onClick={() => void handleDownloadPdf()}
+            >
+              {generating ? 'กำลังสร้างเอกสาร...' : 'ดาวน์โหลด PDF'}
+            </button>
+            {pdfError ? (
+              <p role="alert" className="mt-2 text-center text-lg text-red-700">
+                {pdfError}
+              </p>
+            ) : null}
+          </div>
+
+          <CloudSaveCard answers={answers} onGoNext={goToDone} />
+
+          <button
+            type="button"
+            className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
+            onClick={() => exportDraft(answers)}
+          >
+            ดาวน์โหลดแบบร่าง (.json) ไว้ทำต่อภายหลัง
+          </button>
+        </div>
       </div>
     </main>
   )

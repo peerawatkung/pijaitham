@@ -2,18 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "acp-booklet",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 5173,
-      "autoPort": true
-    },
-    {
-      "name": "acp-booklet-dist",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "preview"],
-      "port": 4173,
-      "autoPort": true
+      "name": "pijaitham",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["wrangler", "pages", "dev", "dist", "--port", "8788"],
+      "port": 8788
     }
   ]
 }

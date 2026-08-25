@@ -44,12 +44,18 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,jpg,ttf,webmanifest}'],
         // หน้าบทความเป็น HTML static ที่สร้างหลัง SW ถูก generate (scripts/build-articles.mjs)
         // ถ้าไม่กันไว้ SW จะเสิร์ฟ index.html ของแอปทับ ทำให้เปิดบทความไม่ได้
-        navigateFallbackDenylist: [/^\/articles/],
+        // /api คือ Pages Functions (โหมดเก็บออนไลน์) — ห้าม SW แตะเช่นกัน
+        navigateFallbackDenylist: [/^\/articles/, /^\/api/],
       },
     }),
   ],
   server: {
     port: process.env.PORT ? Number(process.env.PORT) : 5173,
+    // โหมดเก็บออนไลน์ตอน dev: รัน `npx wrangler pages dev dist --port 8788`
+    // คู่กันไว้ แล้ว /api จะถูกส่งต่อไปที่ Pages Functions จำลองในเครื่อง
+    proxy: {
+      '/api': 'http://127.0.0.1:8788',
+    },
   },
   preview: {
     port: process.env.PORT ? Number(process.env.PORT) : 4173,
