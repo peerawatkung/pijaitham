@@ -36,12 +36,7 @@ export function StoreChoice() {
       </header>
 
       <div className="mt-8 space-y-5">
-        {/* ---- แบบที่ 1: ออนไลน์ (อิเล็กทรอนิกส์) ---- */}
-        <section aria-label="เก็บแบบออนไลน์">
-          <CloudSaveCard answers={answers} onGoNext={goToDone} />
-        </section>
-
-        {/* ---- แบบที่ 2: ไฟล์ในเครื่อง / กระดาษ ---- */}
+        {/* ---- แบบที่ 1: ไฟล์ในเครื่อง / กระดาษ ---- */}
         <section
           aria-label="เก็บเป็นไฟล์และกระดาษ"
           className="rounded-xl border border-tea-200 bg-card p-5"
@@ -67,6 +62,11 @@ export function StoreChoice() {
               {pdfError}
             </p>
           ) : null}
+        </section>
+
+        {/* ---- แบบที่ 2: ออนไลน์ (อิเล็กทรอนิกส์) ---- */}
+        <section aria-label="เก็บแบบออนไลน์">
+          <CloudSaveCard answers={answers} onGoNext={goToDone} />
         </section>
 
         <p className="text-center text-base leading-relaxed text-ink-soft">
