@@ -2,7 +2,7 @@
  * /api/docs/:id — เปิด / เขียนทับ / ลบ เอกสารที่ฝากไว้ (ciphertext เท่านั้น)
  *
  * GET    : คืนก้อนข้อมูลเข้ารหัส (ไม่ต้องยืนยันตัวตน — รหัสเอกสารเดายาก
- *          และเนื้อหาอ่านไม่ได้หากไม่มีรหัสผ่านของเจ้าของ) + ต่ออายุ 1 ปี
+ *          และเนื้อหาอ่านไม่ได้หากไม่มีรหัสผ่านของเจ้าของ) + ต่ออายุ 3 ปี
  * PUT    : เขียนทับ — ต้องมี authToken ตรงกับ hash ที่เก็บไว้
  * DELETE : ลบถาวร — ต้องมี authToken ใน header `x-auth-token`
  */
@@ -55,7 +55,7 @@ export async function onRequestGet(ctx: RouteContext): Promise<Response> {
   const stored = await loadDoc(docs, id)
   if (!stored) return errorJson(NOT_FOUND_MESSAGE, 404)
 
-  // ต่ออายุอีก 1 ปีนับจากการเปิดครั้งนี้ (เขียนค่าเดิมกลับพร้อม TTL ใหม่)
+  // ต่ออายุอีก 3 ปีนับจากการเปิดครั้งนี้ (เขียนค่าเดิมกลับพร้อม TTL ใหม่)
   ctx.waitUntil(
     docs.put(KV_PREFIX + id, JSON.stringify(stored), {
       expirationTtl: DOC_TTL_SECONDS,
