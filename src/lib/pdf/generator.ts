@@ -324,7 +324,12 @@ export class PdfWriter {
   /** บล็อกลงนาม: เส้นเซ็น + ชื่อตัวบรรจง + วันที่ (+ ความสัมพันธ์สำหรับพยาน) */
   signatureBlock(
     role: string,
-    opts: { printedName?: string; withRelation?: boolean } = {},
+    opts: {
+      printedName?: string
+      withRelation?: boolean
+      /** ความสัมพันธ์ที่กรอกมาจากเว็บ — พิมพ์แทนเส้นประให้เขียนมือ */
+      relation?: string
+    } = {},
   ): void {
     const size = 11.5
     const x = MARGIN_X + 16
@@ -352,7 +357,9 @@ export class PdfWriter {
     })
     if (opts.withRelation) {
       this.paragraph(
-        this.dotted(`${PDF_TEXT.signing.relationLabel} `, '', 300, size),
+        opts.relation
+          ? `${PDF_TEXT.signing.relationLabel} ${opts.relation}`
+          : this.dotted(`${PDF_TEXT.signing.relationLabel} `, '', 300, size),
         { x: x + 28, spaceAfter: GAP },
       )
     }
@@ -379,6 +386,12 @@ function thaiDate(date: Date): string {
 function getOwnerName(answers: FormAnswers): string | null {
   const name = answers['fullName']
   return typeof name === 'string' && name.trim() ? name.trim() : null
+}
+
+/** คำตอบชนิดข้อความ — คืน null เมื่อว่าง/ไม่ได้ตอบ */
+function getTextAnswer(answers: FormAnswers, id: string): string | null {
+  const value = answers[id]
+  return typeof value === 'string' && value.trim() ? value.trim() : null
 }
 
 function getPerson(answers: FormAnswers, id: string): PersonAnswer | null {
@@ -544,8 +557,10 @@ export async function generatePdfBytes(
     color: COLOR_SOFT,
   })
 
-  // ---- เนื้อหา 7 ส่วน — แต่ละส่วนขึ้นหน้าใหม่เสมอ ----
+  // ---- เนื้อหารายส่วน — แต่ละส่วนขึ้นหน้าใหม่เสมอ ----
   for (const section of SECTIONS) {
+    // ส่วนที่คำตอบไปปรากฏที่อื่นของเอกสาร (เช่น พยาน → หน้าลงนาม) ไม่พิมพ์ซ้ำที่นี่
+    if (section.pdfOmit) continue
     w.newPage()
     w.sectionHeading(`ส่วนที่ ${section.number}: ${section.title}`)
     if (section.preamble) {
@@ -682,8 +697,17 @@ export async function generatePdfBytes(
     color: COLOR_SOFT,
     spaceAfter: 10,
   })
-  w.signatureBlock(PDF_TEXT.signing.witness1Role, { withRelation: true })
-  w.signatureBlock(PDF_TEXT.signing.witness2Role, { withRelation: true })
+  // ชื่อ/ความสัมพันธ์พยานที่กรอกจากเว็บ (ส่วนที่ 8) — พิมพ์รอไว้ให้ลงลายมือชื่อ
+  w.signatureBlock(PDF_TEXT.signing.witness1Role, {
+    withRelation: true,
+    printedName: getTextAnswer(answers, 'witness1Name') ?? undefined,
+    relation: getTextAnswer(answers, 'witness1Relation') ?? undefined,
+  })
+  w.signatureBlock(PDF_TEXT.signing.witness2Role, {
+    withRelation: true,
+    printedName: getTextAnswer(answers, 'witness2Name') ?? undefined,
+    relation: getTextAnswer(answers, 'witness2Relation') ?? undefined,
+  })
 
   const proxy1 = getPerson(answers, 'proxy1')
   const proxy2 = getPerson(answers, 'proxy2')

@@ -32,7 +32,7 @@ export type AnswerValue =
 /** คำตอบทั้งหมด key ตาม field id ใน src/content/questions.ts — ทุกข้อข้ามได้ */
 export type FormAnswers = Record<string, AnswerValue | undefined>
 
-/** Schema ของไฟล์แบบร่าง .json (versioned เพื่อรองรับ migration ภายหลัง) */
+/** Schema ของแบบร่าง — ใช้ทั้ง autosave ในเครื่องและโหมดเก็บออนไลน์ (versioned เพื่อรองรับ migration) */
 export const DRAFT_VERSION = 1
 
 export interface DraftFile {

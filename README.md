@@ -21,7 +21,7 @@
 ## โครงสร้างสำคัญ
 
 ```
-src/content/questions.ts   # คำถามทั้ง 7 ส่วน (single source of truth)
+src/content/questions.ts   # คำถามทั้ง 8 ส่วน รวมชื่อพยาน (single source of truth)
 src/content/pdfText.ts     # ข้อความคงที่ใน PDF (หน้าลงนาม ภาคผนวก)
 src/lib/pdf/generator.ts   # PDF layout engine
 src/lib/draft.ts           # schema + validation ของแบบร่าง (ใช้โดย autosave และโหมดออนไลน์)

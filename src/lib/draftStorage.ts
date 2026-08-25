@@ -1,7 +1,7 @@
 /**
  * บันทึกแบบร่างอัตโนมัติใน localStorage — อยู่ในเครื่องของผู้ใช้เท่านั้น
  * ไม่มีอะไรถูกส่งออกไปไหน (สอดคล้องคำมั่น privacy ของเว็บ)
- * ใช้ schema และ validation ชุดเดียวกับไฟล์ .json (lib/draft.ts)
+ * ใช้ schema และ validation ชุดเดียวกับแบบร่างออนไลน์ (lib/draft.ts)
  */
 import { buildDraftFile, parseDraft } from './draft'
 import type { FormAnswers } from '../types/form'
@@ -35,7 +35,7 @@ export function saveStoredDraft(answers: FormAnswers): boolean {
   }
 }
 
-/** อ่านร่างที่เก็บไว้ ผ่าน validation เข้มเหมือนไฟล์ .json — ว่าง/เสียหาย = null */
+/** อ่านร่างที่เก็บไว้ ผ่าน validation เข้มชุดเดียวกับแบบร่างออนไลน์ — ว่าง/เสียหาย = null */
 export function loadStoredDraft(): StoredDraft | null {
   const storage = getStorage()
   if (!storage) return null
