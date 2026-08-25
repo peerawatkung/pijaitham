@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { CloudSaveCard } from '../components/CloudSaveCard'
 import { ShareButton } from '../components/ShareButton'
-import { SIGN_CHECKLIST } from '../content/checklist'
+import { NEXT_STEPS, SIGN_CHECKLIST } from '../content/checklist'
 import { PDF_TEXT } from '../content/pdfText'
 import { usePdfDownload } from '../hooks/usePdfDownload'
 import { downloadErrorMessage } from '../lib/browser'
@@ -79,7 +79,7 @@ export function Done() {
       </p>
 
       <ol className="mt-8 space-y-4">
-        {PDF_TEXT.appendix.afterPrintSteps.map((step, i) => (
+        {NEXT_STEPS.map((step, i) => (
           <li
             key={step}
             className="flex items-start gap-4 rounded-xl border border-tea-200 bg-card p-4"
