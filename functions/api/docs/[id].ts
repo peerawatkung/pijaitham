@@ -8,9 +8,10 @@
  */
 import {
   DOC_TTL_SECONDS,
-  ID_PATTERN,
   KV_PREFIX,
+  LOCATOR_PATTERN,
   errorJson,
+  isDocId,
   json,
   readDocPayload,
   sha256Hex,
@@ -24,8 +25,12 @@ const NOT_FOUND_MESSAGE =
 
 function docId(ctx: RouteContext): string | null {
   const raw = ctx.params['id']
-  const id = typeof raw === 'string' ? raw.toUpperCase() : ''
-  return ID_PATTERN.test(id) ? id : null
+  if (typeof raw !== 'string') return null
+  // v1 รหัสเอกสารเป็นตัวพิมพ์ใหญ่ / v2 locator เป็น hex ตัวพิมพ์เล็ก
+  const id = LOCATOR_PATTERN.test(raw.toLowerCase())
+    ? raw.toLowerCase()
+    : raw.toUpperCase()
+  return isDocId(id) ? id : null
 }
 
 async function loadDoc(
@@ -76,10 +81,13 @@ export async function onRequestPut(ctx: RouteContext): Promise<Response> {
   if (!payload) return errorJson('ข้อมูลที่ส่งมาไม่ถูกต้อง', 400)
 
   const stored = await loadDoc(docs, id)
-  if (!stored) return errorJson(NOT_FOUND_MESSAGE, 404)
-
   const authHash = await sha256Hex(payload.authToken)
-  if (!timingSafeEqual(authHash, stored.authHash)) {
+  if (!stored) {
+    // v2 (locator จากอีเมล+รหัสผ่าน): ยังไม่มีเอกสาร = สร้างใหม่ที่ตำแหน่งนี้
+    // — รู้ตำแหน่งได้เฉพาะผู้มีอีเมล+รหัสผ่านครบ จึงปลอดภัยให้ upsert ได้
+    // ส่วน id แบบรหัส 10 ตัว (v1) เซิร์ฟเวอร์เป็นผู้สุ่มเท่านั้น ห้าม client เลือกเอง
+    if (!LOCATOR_PATTERN.test(id)) return errorJson(NOT_FOUND_MESSAGE, 404)
+  } else if (!timingSafeEqual(authHash, stored.authHash)) {
     return errorJson('ไม่มีสิทธิ์แก้ไขเอกสารนี้', 403)
   }
 

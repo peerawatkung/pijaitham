@@ -109,6 +109,112 @@ export async function encryptWithKey(
   }
 }
 
+/** ถอดรหัสด้วยกุญแจที่ derive ไว้แล้ว — กุญแจผิด/ข้อมูลถูกแก้ = WrongPassphraseError */
+export async function decryptWithKey(
+  doc: EncryptedDoc,
+  key: CryptoKey,
+): Promise<string> {
+  try {
+    const plain = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: fromBase64(doc.iv) },
+      key,
+      fromBase64(doc.data),
+    )
+    return new TextDecoder().decode(plain)
+  } catch {
+    throw new WrongPassphraseError()
+  }
+}
+
+// ---- v2: ระบุเอกสารด้วย อีเมล + รหัสผ่าน (ไม่ต้องจำรหัสเอกสาร) ----
+//
+// ทุกอย่าง derive ในเครื่องผู้ใช้ — อีเมลและรหัสผ่านไม่ถูกส่งขึ้นเซิร์ฟเวอร์:
+//   salt      = SHA-256(อีเมล normalize แล้ว)  ← deterministic ต่ออีเมล
+//   base      = PBKDF2(รหัสผ่าน, salt, 310k) 256 บิต
+//   จาก base ผ่าน HKDF แยก 3 ค่า (คนละ info จึงย้อนหากันไม่ได้):
+//   - กุญแจ AES-256-GCM (เข้ารหัสเนื้อหา)
+//   - authToken (สิทธิ์เขียนทับ/ลบ — เซิร์ฟเวอร์เก็บเป็น hash)
+//   - locator (hex 64 ตัว) = "ตำแหน่งเอกสาร" บนเซิร์ฟเวอร์
+//   เซิร์ฟเวอร์เห็นแค่ locator ซึ่งเป็นค่าสุ่มทางเดียว บอกอีเมลกลับไม่ได้
+// แนวทางเดียวกับ password manager (เช่น Bitwarden ใช้ salt=อีเมล)
+
+export interface DocIdentity {
+  /** ตำแหน่งเอกสารบนเซิร์ฟเวอร์ (hex 64 ตัว) */
+  locator: string
+  key: CryptoKey
+  authToken: string
+  /** salt (base64) สำหรับใส่ในก้อนข้อมูล (ค่าคงที่ต่ออีเมล) */
+  saltBase64: string
+}
+
+/** normalize อีเมลให้พิมพ์ใหญ่-เล็ก/ช่องว่างไม่มีผล */
+export function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase()
+}
+
+function toHex(bytes: Uint8Array): string {
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+export async function deriveIdentity(
+  email: string,
+  passphrase: string,
+): Promise<DocIdentity> {
+  const encoder = new TextEncoder()
+  const salt = new Uint8Array(
+    await crypto.subtle.digest(
+      'SHA-256',
+      encoder.encode('pijaitham-email-salt-v2|' + normalizeEmail(email)),
+    ),
+  )
+  const material = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(passphrase),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  )
+  const base = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt, iterations: PBKDF2_ITERATIONS },
+    material,
+    256,
+  )
+  const hkdf = await crypto.subtle.importKey('raw', base, 'HKDF', false, [
+    'deriveBits',
+  ])
+  const expand = (info: string) =>
+    crypto.subtle.deriveBits(
+      {
+        name: 'HKDF',
+        hash: 'SHA-256',
+        salt: new Uint8Array(0),
+        info: encoder.encode(info),
+      },
+      hkdf,
+      256,
+    )
+  const [encBits, authBits, locatorBits] = await Promise.all([
+    expand('pijaitham-enc-v2'),
+    expand('pijaitham-auth-v2'),
+    expand('pijaitham-locator-v2'),
+  ])
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encBits,
+    'AES-GCM',
+    false,
+    ['encrypt', 'decrypt'],
+  )
+  return {
+    locator: toHex(new Uint8Array(locatorBits)),
+    key,
+    authToken: toBase64Url(new Uint8Array(authBits)),
+    saltBase64: toBase64(salt),
+  }
+}
+
 /** ถอดรหัสก้อนข้อมูลด้วยรหัสผ่าน — รหัสผิด/ข้อมูลถูกแก้ = WrongPassphraseError */
 export async function decryptDoc(
   doc: EncryptedDoc,

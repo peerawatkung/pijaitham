@@ -12,9 +12,13 @@
 import { buildDraftFile, parseDraft } from './draft'
 import {
   decryptDoc,
+  decryptWithKey,
+  deriveIdentity,
   deriveKeys,
   encryptWithKey,
+  fromBase64,
   generateSalt,
+  normalizeEmail,
   WrongPassphraseError,
 } from './e2ee'
 import type { EncryptedDoc } from './e2ee'
@@ -46,6 +50,8 @@ interface CloudSession {
   salt: Uint8Array
   key: CryptoKey
   authToken: string
+  /** ข้อความสำหรับแสดงใน UI: อีเมล (v2) หรือรหัสเอกสาร (v1) */
+  label: string
 }
 
 let session: CloudSession | null = null
@@ -53,6 +59,11 @@ let session: CloudSession | null = null
 /** รหัสเอกสารที่กำลังทำงานด้วยใน session นี้ (ไว้แสดงปุ่ม "บันทึกทับ") */
 export function currentCloudDocId(): string | null {
   return session?.id ?? null
+}
+
+/** ป้ายบอกว่าเอกสารใน session นี้เก็บภายใต้อะไร (อีเมล หรือรหัสเอกสาร) */
+export function currentCloudDocLabel(): string | null {
+  return session?.label ?? null
 }
 
 export function clearCloudSession(): void {
@@ -148,8 +159,92 @@ export async function saveCloudDoc(
     throw new CloudDocError(GENERIC_MESSAGE)
   }
 
-  session = { id, salt, key: derived.key, authToken: derived.authToken }
+  session = {
+    id,
+    salt,
+    key: derived.key,
+    authToken: derived.authToken,
+    label: formatDocCode(id),
+  }
   return id
+}
+
+/**
+ * v2: เก็บเอกสารด้วย อีเมล + รหัสผ่าน — ไม่มีรหัสเอกสารให้จำ
+ * ตำแหน่งบนเซิร์ฟเวอร์ derive จากอีเมล+รหัสผ่านในเครื่อง (อีเมลไม่ถูกส่งไป)
+ * บันทึกซ้ำด้วยอีเมล+รหัสผ่านเดิม = ทับฉบับเดิมโดยอัตโนมัติ
+ */
+export async function saveCloudDocByEmail(
+  answers: FormAnswers,
+  email: string,
+  passphrase: string,
+): Promise<void> {
+  const identity = await deriveIdentity(email, passphrase)
+  const salt = fromBase64(identity.saltBase64)
+  const doc = await encryptWithKey(answersToPlainText(answers), identity.key, salt)
+
+  const res = await callApi(`${API_BASE}/${identity.locator}`, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ ...doc, authToken: identity.authToken }),
+  })
+  if (res.status === 403) {
+    // ตำแหน่งนี้มีเอกสารที่ authToken ไม่ตรง — ไม่ควรเกิดตามการ derive ปกติ
+    throw new CloudDocError(GENERIC_MESSAGE)
+  }
+  if (!res.ok) {
+    throw new CloudDocError(await serverMessage(res, GENERIC_MESSAGE))
+  }
+
+  session = {
+    id: identity.locator,
+    salt,
+    key: identity.key,
+    authToken: identity.authToken,
+    label: normalizeEmail(email),
+  }
+}
+
+/** v2: เปิดเอกสารด้วย อีเมล + รหัสผ่าน */
+export async function openCloudDocByEmail(
+  email: string,
+  passphrase: string,
+): Promise<FormAnswers> {
+  const identity = await deriveIdentity(email, passphrase)
+  const res = await callApi(`${API_BASE}/${identity.locator}`)
+  if (res.status === 404) {
+    // อีเมลหรือรหัสผ่านผิดข้อใดข้อหนึ่ง ก็จะชี้ไปตำแหน่งที่ไม่มีเอกสารเหมือนกัน
+    throw new CloudDocError(
+      'ไม่พบเอกสาร — โปรดตรวจอีเมลและรหัสผ่านอีกครั้ง (ต้องตรงกับที่ใช้ตอนบันทึกทุกตัวอักษร) หรือเอกสารอาจหมดอายุ/ถูกลบไปแล้ว',
+    )
+  }
+  if (!res.ok) {
+    throw new CloudDocError(await serverMessage(res, GENERIC_MESSAGE))
+  }
+
+  const doc = parseEncryptedDoc(await res.json())
+  let plainText: string
+  try {
+    plainText = await decryptWithKey(doc, identity.key)
+  } catch {
+    throw new CloudDocError(GENERIC_MESSAGE)
+  }
+
+  let answers: FormAnswers
+  try {
+    answers = parseDraft(plainText)
+  } catch {
+    throw new CloudDocError('ข้อมูลเอกสารเสียหาย ไม่สามารถเปิดได้')
+  }
+
+  session = {
+    id: identity.locator,
+    salt: fromBase64(identity.saltBase64),
+    key: identity.key,
+    authToken: identity.authToken,
+    label: normalizeEmail(email),
+  }
+  return answers
 }
 
 /** บันทึกทับรหัสเดิมใน session (รหัสผ่านเดิม ไม่ต้องพิมพ์ซ้ำ) */
@@ -220,7 +315,13 @@ export async function openCloudDoc(
     throw new CloudDocError('ข้อมูลเอกสารเสียหาย ไม่สามารถเปิดได้')
   }
 
-  session = { id, salt, key: derived.key, authToken: derived.authToken }
+  session = {
+    id,
+    salt,
+    key: derived.key,
+    authToken: derived.authToken,
+    label: formatDocCode(id),
+  }
   return answers
 }
 

@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import {
   decryptDoc,
+  decryptWithKey,
+  deriveIdentity,
   deriveKeys,
   encryptWithKey,
   fromBase64,
   generateSalt,
+  normalizeEmail,
   toBase64,
   WrongPassphraseError,
 } from './e2ee'
@@ -50,6 +53,32 @@ describe('e2ee — เข้ารหัส/ถอดรหัสในเคร
     const b = await encryptWithKey('ข้อความเดียวกัน', key, salt)
     expect(a.iv).not.toBe(b.iv)
     expect(a.data).not.toBe(b.data)
+  })
+
+  it('deriveIdentity: อีเมล+รหัสผ่านเดิม = ตำแหน่ง/กุญแจเดิมเสมอ (ทุกรูปแบบการพิมพ์อีเมล)', async () => {
+    const a = await deriveIdentity('Somsri@Gmail.com ', 'passphrase-123')
+    const b = await deriveIdentity('somsri@gmail.com', 'passphrase-123')
+    expect(a.locator).toBe(b.locator)
+    expect(a.authToken).toBe(b.authToken)
+    expect(a.locator).toMatch(/^[0-9a-f]{64}$/)
+
+    // เข้ารหัสด้วยกุญแจของ a ต้องถอดได้ด้วยกุญแจของ b
+    const doc = await encryptWithKey('ข้อความลับ', a.key, fromBase64(a.saltBase64))
+    expect(await decryptWithKey(doc, b.key)).toBe('ข้อความลับ')
+  })
+
+  it('deriveIdentity: เปลี่ยนอีเมลหรือรหัสผ่าน = ตำแหน่งใหม่ทั้งชุด', async () => {
+    const base = await deriveIdentity('somsri@gmail.com', 'passphrase-123')
+    const otherEmail = await deriveIdentity('other@gmail.com', 'passphrase-123')
+    const otherPass = await deriveIdentity('somsri@gmail.com', 'passphrase-456')
+    expect(otherEmail.locator).not.toBe(base.locator)
+    expect(otherPass.locator).not.toBe(base.locator)
+    expect(otherEmail.authToken).not.toBe(base.authToken)
+    expect(otherPass.authToken).not.toBe(base.authToken)
+  })
+
+  it('normalizeEmail ตัดช่องว่างและแปลงเป็นตัวเล็ก', () => {
+    expect(normalizeEmail('  Somsri@GMAIL.com ')).toBe('somsri@gmail.com')
   })
 
   it('authToken เป็น base64url และเปลี่ยนตาม salt/รหัสผ่าน', async () => {

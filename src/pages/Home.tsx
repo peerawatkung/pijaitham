@@ -380,14 +380,14 @@ export function Home() {
           </h3>
           <p className="mt-1 text-base leading-relaxed text-ink">
             ถ้าเคยเลือก &ldquo;เก็บแบบออนไลน์&rdquo; ไว้
-            เปิดได้จากทุกเครื่องด้วยรหัสเอกสารและรหัสผ่านของคุณ
+            เปิดได้จากทุกเครื่องด้วยอีเมลและรหัสผ่านของคุณ
           </p>
           <button
             type="button"
             className="mt-3 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
             onClick={goToOpenCloud}
           >
-            เปิดด้วยรหัสเอกสาร
+            เปิดด้วยอีเมล + รหัสผ่าน
           </button>
         </div>
       </section>

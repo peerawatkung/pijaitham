@@ -20,6 +20,18 @@ export const ID_ALPHABET = '23456789ABCDEFGHJKMNPQRSTVWXYZ'
 export const ID_LENGTH = 10
 export const ID_PATTERN = new RegExp(`^[${ID_ALPHABET}]{${ID_LENGTH}}$`)
 
+/**
+ * v2: ตำแหน่งเอกสารแบบ derive จากอีเมล+รหัสผ่านฝั่ง client (hex 64 ตัว)
+ * — client เป็นคนกำหนดตำแหน่งเอง (PUT upsert) เพราะรู้ตำแหน่งได้เฉพาะ
+ * ผู้ที่มีทั้งอีเมลและรหัสผ่านเท่านั้น เซิร์ฟเวอร์ย้อนกลับเป็นอีเมลไม่ได้
+ */
+export const LOCATOR_PATTERN = /^[0-9a-f]{64}$/
+
+/** id ที่ยอมรับ: รหัสเอกสาร 10 ตัว (v1) หรือ locator hex 64 ตัว (v2) */
+export function isDocId(id: string): boolean {
+  return ID_PATTERN.test(id) || LOCATOR_PATTERN.test(id)
+}
+
 /** ขนาด ciphertext สูงสุด (base64) — เอกสารจริงเล็กกว่านี้มาก กันการยัดไฟล์ใหญ่ */
 const MAX_DATA_CHARS = 300_000
 const MAX_BODY_CHARS = 400_000

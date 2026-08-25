@@ -1,16 +1,23 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { BackLink } from '../components/BackLink'
-import { cloudErrorMessage, openCloudDoc } from '../lib/cloudDoc'
+import {
+  cloudErrorMessage,
+  openCloudDoc,
+  openCloudDocByEmail,
+} from '../lib/cloudDoc'
 import { useForm } from '../state/FormContext'
 
 /**
- * หน้า "เปิดเอกสารที่เก็บออนไลน์ไว้" — กรอกรหัสเอกสาร + รหัสผ่าน
- * ดึง ciphertext จากเซิร์ฟเวอร์แล้วถอดรหัสในเครื่องนี้ จากนั้นพาไปหน้าตรวจทาน
+ * หน้า "เปิดเอกสารที่เก็บออนไลน์ไว้" — เปิดด้วย อีเมล + รหัสผ่าน
+ * (รหัสเอกสาร 10 ตัวแบบเดิมยังเปิดได้ ผ่านตัวเลือกด้านล่าง)
+ * ดึงข้อมูลเข้ารหัสจากเซิร์ฟเวอร์แล้วถอดรหัสในเครื่องนี้ จากนั้นพาไปหน้าตรวจทาน
  */
 export function OpenCloud() {
   const { loadAnswers, goToReview, goHome } = useForm()
+  const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
+  const [useLegacyCode, setUseLegacyCode] = useState(false)
   const [passphrase, setPassphrase] = useState('')
   const [showPassphrase, setShowPassphrase] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -22,7 +29,9 @@ export function OpenCloud() {
     setBusy(true)
     setError(null)
     try {
-      const answers = await openCloudDoc(code, passphrase)
+      const answers = useLegacyCode
+        ? await openCloudDoc(code, passphrase)
+        : await openCloudDocByEmail(email, passphrase)
       loadAnswers(answers)
       goToReview()
     } catch (err) {
@@ -43,28 +52,45 @@ export function OpenCloud() {
           เปิดเอกสารที่เก็บออนไลน์ไว้
         </h1>
         <p className="text-lg leading-relaxed text-ink-soft">
-          กรอกรหัสเอกสารและรหัสผ่านที่ตั้งไว้ตอนบันทึก —
+          กรอกอีเมลและรหัสผ่านที่ใช้ตอนบันทึก —
           เอกสารจะถูกถอดรหัสในเครื่องนี้เท่านั้น
         </p>
       </header>
 
       <form className="mt-8 space-y-4" onSubmit={(e) => void handleOpen(e)}>
-        <label className="block">
-          <span className="text-base font-bold text-ink">
-            รหัสเอกสาร (10 ตัว เช่น ABCDE-23456)
-          </span>
-          <input
-            type="text"
-            inputMode="text"
-            autoCapitalize="characters"
-            autoCorrect="off"
-            spellCheck={false}
-            placeholder="XXXXX-XXXXX"
-            className={`mt-1 font-mono tracking-wider ${inputClass}`}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
-        </label>
+        {useLegacyCode ? (
+          <label className="block">
+            <span className="text-base font-bold text-ink">
+              รหัสเอกสาร (10 ตัว เช่น ABCDE-23456)
+            </span>
+            <input
+              type="text"
+              inputMode="text"
+              autoCapitalize="characters"
+              autoCorrect="off"
+              spellCheck={false}
+              placeholder="XXXXX-XXXXX"
+              className={`mt-1 font-mono tracking-wider ${inputClass}`}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+          </label>
+        ) : (
+          <label className="block">
+            <span className="text-base font-bold text-ink">
+              อีเมลที่ใช้ตอนบันทึก
+            </span>
+            <input
+              type="email"
+              autoComplete="email"
+              inputMode="email"
+              placeholder="เช่น somsri@gmail.com"
+              className={`mt-1 ${inputClass}`}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
+        )}
         <label className="block">
           <span className="text-base font-bold text-ink">รหัสผ่านเอกสาร</span>
           <input
@@ -97,13 +123,27 @@ export function OpenCloud() {
             {error}
           </p>
         ) : null}
+
+        <button
+          type="button"
+          className="inline-flex min-h-[44px] items-center text-base text-ink-soft underline underline-offset-4 hover:text-ink"
+          onClick={() => {
+            setUseLegacyCode((prev) => !prev)
+            setError(null)
+          }}
+        >
+          {useLegacyCode
+            ? 'กลับไปเปิดด้วยอีเมล'
+            : 'เคยได้ "รหัสเอกสาร 10 ตัว" มา? เปิดด้วยรหัสเอกสารแทน'}
+        </button>
       </form>
 
       <div className="mt-8 rounded-xl border border-dawn-100 bg-dawn-100/40 p-5">
         <ul className="list-disc space-y-1.5 pl-6 text-base leading-relaxed text-ink">
           <li>
             เอกสารถูกเก็บแบบเข้ารหัสตั้งแต่ก่อนออกจากเครื่องของผู้เขียน —
-            เซิร์ฟเวอร์อ่านเนื้อหาไม่ได้ และถอดรหัสได้ด้วยรหัสผ่านนี้เท่านั้น
+            เซิร์ฟเวอร์อ่านเนื้อหาไม่ได้ (แม้แต่อีเมลก็ไม่ถูกส่งไป)
+            และถอดรหัสได้ด้วยอีเมล+รหัสผ่านชุดเดิมเท่านั้น
           </li>
           <li>
             เอกสารเก็บไว้ 1 ปีนับจากการเปิดครั้งล่าสุด —

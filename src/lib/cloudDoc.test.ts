@@ -15,12 +15,15 @@ import {
   CloudDocError,
   clearCloudSession,
   currentCloudDocId,
+  currentCloudDocLabel,
   deleteCloudDoc,
   formatDocCode,
   normalizeDocCode,
   openCloudDoc,
+  openCloudDocByEmail,
   overwriteCloudDoc,
   saveCloudDoc,
+  saveCloudDocByEmail,
 } from './cloudDoc'
 import type { FormAnswers } from '../types/form'
 
@@ -152,6 +155,98 @@ describe('cloudDoc — วงจรเก็บออนไลน์ครบว
     await openCloudDoc(id, 'passphrase-123')
     await Promise.all(pending)
     expect(store.size).toBe(1) // ค่ายังอยู่ครบหลัง refresh
+  })
+})
+
+describe('cloudDoc — โหมดอีเมล + รหัสผ่าน (v2)', () => {
+  let store: Map<string, string>
+  let pending: Promise<unknown>[]
+
+  beforeEach(() => {
+    store = new Map()
+    ;({ pending } = installFakeServer({ DOCS: createFakeKv(store) }))
+    clearCloudSession()
+  })
+
+  afterEach(async () => {
+    await Promise.all(pending)
+    vi.unstubAllGlobals()
+  })
+
+  it('บันทึกด้วยอีเมล → เปิดด้วยอีเมล+รหัสผ่านเดิม ได้คำตอบครบ', async () => {
+    await saveCloudDocByEmail(ANSWERS, 'Somsri@Gmail.com ', 'passphrase-123')
+    expect(store.size).toBe(1)
+    // บนเซิร์ฟเวอร์ต้องไม่มีทั้งเนื้อหาและอีเมล (ส่งขึ้นเฉพาะ ciphertext)
+    const kvDump = [...store.entries()].flat().join('|')
+    expect(kvDump).not.toContain('สมศรี')
+    expect(kvDump.toLowerCase()).not.toContain('somsri')
+
+    clearCloudSession()
+    // อีเมลพิมพ์ต่างรูปแบบ (ช่องว่าง/ตัวพิมพ์) ต้องเปิดได้เหมือนกัน
+    const opened = await openCloudDocByEmail(
+      '  SOMSRI@gmail.com',
+      'passphrase-123',
+    )
+    expect(opened).toEqual(ANSWERS)
+    expect(currentCloudDocLabel()).toBe('somsri@gmail.com')
+  })
+
+  it('รหัสผ่านผิด/อีเมลผิด = ไม่พบเอกสาร (ชี้คนละตำแหน่ง)', async () => {
+    await saveCloudDocByEmail(ANSWERS, 'somsri@gmail.com', 'passphrase-123')
+    clearCloudSession()
+    await expect(
+      openCloudDocByEmail('somsri@gmail.com', 'wrong-passphrase'),
+    ).rejects.toThrow(/ไม่พบเอกสาร/)
+    await expect(
+      openCloudDocByEmail('another@gmail.com', 'passphrase-123'),
+    ).rejects.toThrow(/ไม่พบเอกสาร/)
+  })
+
+  it('บันทึกซ้ำด้วยอีเมล+รหัสผ่านเดิม = ทับฉบับเดิม ไม่งอกเอกสารใหม่', async () => {
+    await saveCloudDocByEmail(ANSWERS, 'somsri@gmail.com', 'passphrase-123')
+    clearCloudSession()
+    await saveCloudDocByEmail(
+      { fullName: 'สมศรี ฉบับล่าสุด' },
+      'somsri@gmail.com',
+      'passphrase-123',
+    )
+    expect(store.size).toBe(1)
+
+    clearCloudSession()
+    const opened = await openCloudDocByEmail('somsri@gmail.com', 'passphrase-123')
+    expect(opened).toEqual({ fullName: 'สมศรี ฉบับล่าสุด' })
+  })
+
+  it('อีเมลเดิมแต่รหัสผ่านใหม่ = เอกสารคนละฉบับ (ไม่ทับกัน)', async () => {
+    await saveCloudDocByEmail(ANSWERS, 'somsri@gmail.com', 'passphrase-one')
+    await saveCloudDocByEmail(ANSWERS, 'somsri@gmail.com', 'passphrase-two')
+    expect(store.size).toBe(2)
+  })
+
+  it('บันทึกทับผ่าน session และลบได้ เหมือนโหมดรหัสเอกสาร', async () => {
+    await saveCloudDocByEmail(ANSWERS, 'somsri@gmail.com', 'passphrase-123')
+    await overwriteCloudDoc({ fullName: 'สมศรี แก้ไขแล้ว' })
+    expect(store.size).toBe(1)
+    await deleteCloudDoc()
+    expect(store.size).toBe(0)
+    expect(currentCloudDocId()).toBeNull()
+  })
+
+  it('client แอบ PUT ตำแหน่งที่มีเอกสารอยู่ด้วย token อื่น = 403 (กันสวมทับ)', async () => {
+    await saveCloudDocByEmail(ANSWERS, 'somsri@gmail.com', 'passphrase-123')
+    const locator = currentCloudDocId()
+    const res = await fetch(`/api/docs/${locator}`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        v: 1,
+        salt: 'c2FsdA==',
+        iv: 'aXZpdml2aXZpdg==',
+        data: 'ZmFrZS1kYXRh',
+        authToken: 'attacker-token-attacker-token-xx',
+      }),
+    })
+    expect(res.status).toBe(403)
   })
 })
 

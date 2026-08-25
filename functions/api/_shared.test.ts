@@ -4,6 +4,7 @@ import {
   ID_LENGTH,
   ID_PATTERN,
   generateDocId,
+  isDocId,
   parseDocPayload,
   sha256Hex,
   timingSafeEqual,
@@ -56,6 +57,21 @@ describe('generateDocId — รหัสเอกสาร', () => {
       seen.add(id)
     }
     expect(seen.size).toBe(200)
+  })
+})
+
+describe('isDocId — รับทั้งรหัส 10 ตัว (v1) และ locator hex 64 (v2)', () => {
+  it('รับรูปแบบที่ถูกต้องทั้งสองแบบ', () => {
+    expect(isDocId('ABCDE23456')).toBe(true)
+    expect(isDocId('a'.repeat(64))).toBe(true)
+    expect(isDocId('0123456789abcdef'.repeat(4))).toBe(true)
+  })
+
+  it('ปฏิเสธรูปแบบอื่น', () => {
+    expect(isDocId('short')).toBe(false)
+    expect(isDocId('A'.repeat(64))).toBe(false) // hex ต้องตัวเล็ก
+    expect(isDocId('g'.repeat(64))).toBe(false) // นอกชุด hex
+    expect(isDocId('a'.repeat(63))).toBe(false)
   })
 })
 

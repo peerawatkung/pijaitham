@@ -2,20 +2,22 @@ import { useState } from 'react'
 import {
   clearCloudSession,
   cloudErrorMessage,
-  currentCloudDocId,
+  currentCloudDocLabel,
   deleteCloudDoc,
-  formatDocCode,
   overwriteCloudDoc,
-  saveCloudDoc,
+  saveCloudDocByEmail,
 } from '../lib/cloudDoc'
 import { PASSPHRASE_MIN_LENGTH } from '../lib/e2ee'
 import type { FormAnswers } from '../types/form'
 
 type Busy = 'save' | 'overwrite' | 'delete' | null
 
+const EMAIL_PATTERN = /^\S+@\S+\.\S+$/
+
 /**
  * การ์ด "เก็บแบบออนไลน์ (อิเล็กทรอนิกส์)" — ใช้ในหน้าตรวจทานและหน้าขั้นตอนถัดไป
- * เอกสารถูกเข้ารหัสในเครื่องผู้ใช้ก่อนส่งขึ้นเซิร์ฟเวอร์เสมอ (ดู lib/e2ee.ts)
+ * ระบุเอกสารด้วย อีเมล + รหัสผ่าน — derive เป็นกุญแจ/ตำแหน่งในเครื่องผู้ใช้
+ * (อีเมลและรหัสผ่านไม่ถูกส่งขึ้นเซิร์ฟเวอร์ — ดู lib/e2ee.ts)
  */
 export function CloudSaveCard({
   answers,
@@ -25,24 +27,27 @@ export function CloudSaveCard({
   /** ปุ่ม "ไปดูขั้นตอนถัดไป" หลังบันทึกสำเร็จ (ใช้ในหน้าตรวจทาน) */
   onGoNext?: () => void
 }) {
+  const [email, setEmail] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [confirm, setConfirm] = useState('')
   const [showPassphrase, setShowPassphrase] = useState(false)
   const [busy, setBusy] = useState<Busy>(null)
   const [error, setError] = useState<string | null>(null)
-  const [savedId, setSavedId] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
+  const [savedAs, setSavedAs] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleted, setDeleted] = useState(false)
-  // มีรหัสเดิมใน session (เพิ่งบันทึก หรือเปิดจากรหัสมา) → เสนอ "บันทึกทับ"
-  const [existingId, setExistingId] = useState<string | null>(() =>
-    currentCloudDocId(),
+  // มีเอกสารเดิมใน session (เพิ่งบันทึก หรือเปิดเข้ามา) → เสนอ "บันทึกทับ"
+  const [existingLabel, setExistingLabel] = useState<string | null>(() =>
+    currentCloudDocLabel(),
   )
-  const [asNewCode, setAsNewCode] = useState(false)
+  const [asNew, setAsNew] = useState(false)
 
-  const showForm = existingId === null || asNewCode
+  const showForm = existingLabel === null || asNew
 
   const validateForm = (): string | null => {
+    if (!EMAIL_PATTERN.test(email.trim())) {
+      return 'กรุณากรอกอีเมลให้ถูกต้อง เช่น somsri@gmail.com'
+    }
     if (passphrase.length < PASSPHRASE_MIN_LENGTH) {
       return `รหัสผ่านต้องยาวอย่างน้อย ${PASSPHRASE_MIN_LENGTH} ตัวอักษร`
     }
@@ -61,10 +66,11 @@ export function CloudSaveCard({
     setBusy('save')
     setError(null)
     try {
-      const id = await saveCloudDoc(answers, passphrase)
-      setSavedId(id)
-      setExistingId(id)
-      setAsNewCode(false)
+      await saveCloudDocByEmail(answers, email, passphrase)
+      const label = currentCloudDocLabel()
+      setSavedAs(label)
+      setExistingLabel(label)
+      setAsNew(false)
       setDeleted(false)
       setPassphrase('')
       setConfirm('')
@@ -80,11 +86,11 @@ export function CloudSaveCard({
     setError(null)
     try {
       await overwriteCloudDoc(answers)
-      setSavedId(currentCloudDocId())
+      setSavedAs(currentCloudDocLabel())
       setDeleted(false)
     } catch (err) {
       setError(cloudErrorMessage(err))
-      setExistingId(currentCloudDocId()) // session อาจถูกล้างเมื่อรหัสเดิมใช้ไม่ได้
+      setExistingLabel(currentCloudDocLabel()) // session อาจถูกล้างเมื่อของเดิมใช้ไม่ได้
     } finally {
       setBusy(null)
     }
@@ -100,25 +106,14 @@ export function CloudSaveCard({
     try {
       await deleteCloudDoc()
       clearCloudSession()
-      setExistingId(null)
-      setSavedId(null)
+      setExistingLabel(null)
+      setSavedAs(null)
       setConfirmDelete(false)
       setDeleted(true)
     } catch (err) {
       setError(cloudErrorMessage(err))
     } finally {
       setBusy(null)
-    }
-  }
-
-  const handleCopy = async () => {
-    if (!savedId) return
-    try {
-      await navigator.clipboard.writeText(formatDocCode(savedId))
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2500)
-    } catch {
-      // คัดลอกอัตโนมัติไม่ได้ (เบราว์เซอร์เก่า) — ผู้ใช้ยังเห็นรหัสบนจอ จดเองได้
     }
   }
 
@@ -131,33 +126,30 @@ export function CloudSaveCard({
         เก็บแบบออนไลน์ (อิเล็กทรอนิกส์)
       </h3>
       <p className="mt-2 text-base leading-relaxed text-ink">
-        เอกสารจะถูก<strong>เข้ารหัสในเครื่องของคุณก่อน</strong>ส่งขึ้นเซิร์ฟเวอร์
-        — เซิร์ฟเวอร์เก็บได้เพียงข้อมูลที่อ่านไม่ออก
+        ใช้แค่ <strong>อีเมล + รหัสผ่าน</strong> เปิดเอกสารได้จากทุกเครื่อง —
+        เอกสารถูก<strong>เข้ารหัสในเครื่องของคุณก่อน</strong>ส่งขึ้นเซิร์ฟเวอร์
+        แม้แต่อีเมลก็ไม่ถูกส่งไป เซิร์ฟเวอร์จึงเก็บได้เพียงข้อมูลที่อ่านไม่ออก
         ไม่มีใครถอดได้หากไม่มีรหัสผ่านของคุณ (รวมถึงผู้พัฒนาเว็บนี้)
-        คุณจะได้ &ldquo;รหัสเอกสาร&rdquo; ไว้เปิดจากเครื่องไหนก็ได้
       </p>
 
-      {/* ---- บันทึกสำเร็จ: แสดงรหัสเอกสาร ---- */}
-      {savedId ? (
-        <div className="mt-4 rounded-xl border border-tea-200 bg-tea-100/60 p-4 text-center">
-          <p className="text-base font-bold text-ink">
-            เก็บขึ้นเซิร์ฟเวอร์เรียบร้อย — รหัสเอกสารของคุณคือ
+      {/* ---- บันทึกสำเร็จ ---- */}
+      {savedAs ? (
+        <div className="mt-4 rounded-xl border border-tea-200 bg-tea-100/60 p-4">
+          <p className="text-center text-base font-bold text-ink">
+            เก็บขึ้นเซิร์ฟเวอร์เรียบร้อยแล้ว ✓
           </p>
-          <p className="mt-2 select-all font-mono text-3xl font-bold tracking-wider text-tea-700">
-            {formatDocCode(savedId)}
+          <p className="mt-1 text-center text-lg leading-relaxed text-ink">
+            เปิดจากเครื่องไหนก็ได้ด้วย <strong>{savedAs}</strong>{' '}
+            และรหัสผ่านที่ตั้งไว้
           </p>
-          <button
-            type="button"
-            className="mt-3 inline-flex min-h-[44px] items-center rounded-xl border border-tea-200 bg-white px-6 py-2 text-base text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30"
-            onClick={() => void handleCopy()}
-          >
-            {copied ? 'คัดลอกแล้ว ✓' : 'คัดลอกรหัส'}
-          </button>
           <ul className="mt-3 list-disc space-y-1 pl-6 text-left text-base leading-relaxed text-ink">
             <li>
-              จดรหัสเอกสารและรหัสผ่านไว้ในที่ปลอดภัย —
-              บอกรหัสทั้งสองแก่คนที่คุณไว้วางใจ (เช่น ผู้ตัดสินใจแทน)
+              บอกอีเมลและรหัสผ่านแก่คนที่คุณไว้วางใจ (เช่น ผู้ตัดสินใจแทน)
               เพื่อให้เปิดเอกสารได้ยามจำเป็น
+            </li>
+            <li>
+              บันทึกครั้งถัดไปด้วยอีเมลและรหัสผ่านเดิม
+              จะแทนที่ฉบับเดิมโดยอัตโนมัติ — ใช้รหัสผ่านเดิมทุกครั้ง
             </li>
             <li>
               <strong>หากลืมรหัสผ่าน จะไม่มีใครกู้เอกสารนี้ได้</strong> —
@@ -186,8 +178,8 @@ export function CloudSaveCard({
         </p>
       ) : null}
 
-      {/* ---- มีรหัสเดิมใน session: เสนอบันทึกทับ ---- */}
-      {existingId !== null && !asNewCode ? (
+      {/* ---- มีเอกสารเดิมใน session: เสนอบันทึกทับ ---- */}
+      {existingLabel !== null && !asNew ? (
         <div className="mt-4 space-y-3">
           <button
             type="button"
@@ -197,18 +189,18 @@ export function CloudSaveCard({
           >
             {busy === 'overwrite'
               ? 'กำลังบันทึก...'
-              : `บันทึกทับรหัสเดิม (${formatDocCode(existingId)})`}
+              : `บันทึกทับฉบับเดิม (${existingLabel})`}
           </button>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-1">
             <button
               type="button"
               className="inline-flex min-h-[44px] items-center text-base text-ink-soft underline underline-offset-4 hover:text-ink"
               onClick={() => {
-                setAsNewCode(true)
+                setAsNew(true)
                 setError(null)
               }}
             >
-              เก็บเป็นรหัสใหม่แทน
+              เก็บด้วยอีเมล/รหัสผ่านอื่นแทน
             </button>
             <button
               type="button"
@@ -226,9 +218,21 @@ export function CloudSaveCard({
         </div>
       ) : null}
 
-      {/* ---- ฟอร์มตั้งรหัสผ่าน + บันทึกเป็นรหัสใหม่ ---- */}
+      {/* ---- ฟอร์มอีเมล + รหัสผ่าน ---- */}
       {showForm ? (
         <div className="mt-4 space-y-3">
+          <label className="block">
+            <span className="text-base font-bold text-ink">อีเมลของคุณ</span>
+            <input
+              type="email"
+              autoComplete="email"
+              inputMode="email"
+              placeholder="เช่น somsri@gmail.com"
+              className={`mt-1 ${inputClass}`}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
           <label className="block">
             <span className="text-base font-bold text-ink">
               ตั้งรหัสผ่านเอกสาร (อย่างน้อย {PASSPHRASE_MIN_LENGTH} ตัวอักษร)
@@ -263,7 +267,8 @@ export function CloudSaveCard({
             แสดงรหัสผ่าน
           </label>
           <p className="text-sm leading-relaxed text-ink-soft">
-            เลือกรหัสผ่านที่คุณจำได้แต่คนอื่นเดายาก —
+            อีเมลใช้เป็นส่วนหนึ่งของกุญแจเข้ารหัสในเครื่องคุณเท่านั้น
+            ไม่ถูกส่งไปที่ใด และไม่มีอีเมลใด ๆ ส่งถึงคุณ —
             หากลืมรหัสผ่าน จะไม่มีใครกู้เอกสารได้ (รวมถึงผู้พัฒนา)
           </p>
           <button
@@ -276,16 +281,16 @@ export function CloudSaveCard({
               ? 'กำลังเข้ารหัสและบันทึก...'
               : 'เข้ารหัสและเก็บขึ้นเซิร์ฟเวอร์'}
           </button>
-          {asNewCode ? (
+          {asNew ? (
             <button
               type="button"
               className="inline-flex min-h-[44px] items-center text-base text-ink-soft underline underline-offset-4 hover:text-ink"
               onClick={() => {
-                setAsNewCode(false)
+                setAsNew(false)
                 setError(null)
               }}
             >
-              กลับไปบันทึกทับรหัสเดิม
+              กลับไปบันทึกทับฉบับเดิม
             </button>
           ) : null}
         </div>
