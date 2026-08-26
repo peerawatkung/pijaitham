@@ -5,12 +5,12 @@ import { SAMPLE_ANSWERS } from '../content/sampleAnswers'
 import { formatAnswer } from '../lib/formatAnswer'
 import { useForm } from '../state/FormContext'
 
-/** ข้อความสำหรับข้อที่ตัวอย่างเว้นไว้ */
-const SKIPPED_TEXT = 'เว้นว่างไว้ — ในเอกสารจะมีเส้นให้เขียนด้วยปากกา'
+/** ข้อความสำหรับข้อที่ตัวอย่างเว้นไว้ — สำนวนเดียวกับหน้าตรวจทาน */
+const SKIPPED_TEXT = 'เว้นว่างไว้ — ในเอกสารจะเว้นที่ให้เขียนด้วยปากกาภายหลัง'
 
 /**
  * หน้าตัวอย่างเอกสารแบบ HTML — อ่านสบายบนมือถือ (PDF ย่อทั้งหน้า A4 ตัวจะเล็ก)
- * มีปุ่มเปิดไฟล์ PDF จริงสำหรับคนอยากเห็นหน้าตาเอกสารพร้อมปริ้น
+ * มีปุ่มเปิดไฟล์ PDF จริงสำหรับคนอยากเห็นหน้าตาเอกสารพร้อมพิมพ์
  */
 export function Sample() {
   const { goHome, goToStep } = useForm()
@@ -43,8 +43,9 @@ export function Sample() {
         ตัวอย่างเอกสารที่กรอกเสร็จแล้ว
       </h1>
       <p className="mt-2 text-lg leading-relaxed text-ink-soft">
-        ตัวอย่างสมมติของ &ldquo;สมศรี ใจดี&rdquo; เพื่อให้เห็นภาพว่าเอกสารฉบับ
-        สมบูรณ์บอกเล่าอะไรบ้าง — บุคคลและข้อมูลทั้งหมดไม่มีอยู่จริง
+        ตัวอย่างสมมติของ &ldquo;สมศรี ใจดี&rdquo;
+        เพื่อให้เห็นภาพว่าเอกสารฉบับสมบูรณ์บอกเล่าอะไรบ้าง —
+        บุคคลและข้อมูลทั้งหมดไม่มีอยู่จริง
       </p>
 
       <button
@@ -53,7 +54,7 @@ export function Sample() {
         className="mt-5 rounded-xl border border-tea-200 px-6 py-3 text-lg text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30 disabled:cursor-wait disabled:opacity-60"
         onClick={() => void handleOpenPdf()}
       >
-        {busy ? 'กำลังสร้างเอกสาร...' : 'เปิดฉบับ PDF (หน้าตาจริงพร้อมปริ้น)'}
+        {busy ? 'กำลังสร้างเอกสาร...' : 'เปิดฉบับ PDF (หน้าตาจริงพร้อมพิมพ์)'}
       </button>
       {error ? (
         <p role="alert" className="mt-2 text-lg text-red-700">
@@ -97,7 +98,7 @@ export function Sample() {
 
       <p className="mt-6 text-base leading-relaxed text-ink-soft">
         ในไฟล์ PDF จริงยังมีหน้าปก หน้าลงนามพร้อมพยาน 2 คน
-        และภาคผนวกคำแนะนำหลังปริ้นให้ครบถ้วน
+        และภาคผนวกคำแนะนำหลังพิมพ์ให้ครบถ้วน
       </p>
 
       <button

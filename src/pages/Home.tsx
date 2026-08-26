@@ -87,6 +87,8 @@ export function Home() {
           aria-hidden="true"
           width={640}
           height={640}
+          // React 18 ยังไม่มี prop fetchPriority (มาใน 19) — ส่งเป็น attribute ตรง
+          {...{ fetchpriority: 'high' }}
           className="h-auto w-72 sm:w-80"
         />
         <p className="mt-2 max-w-xl text-2xl font-bold leading-snug text-tea-700 sm:text-3xl">
@@ -171,9 +173,9 @@ export function Home() {
           <li>ข้อความจากใจ ถึงคนที่คุณรัก</li>
         </ul>
         <p className="mt-4 text-lg leading-relaxed text-ink">
-          เพียงตอบคำถามทีละขั้นด้วยคำถามที่อ่อนโยน
+          เพียงตอบคำถามที่อ่อนโยนทีละข้อ
           แล้วเราจะเรียบเรียงทุกคำตอบเป็นเอกสารที่สวยงาม
-          พร้อมปริ้นไปลงนามให้มีผลจริงตามกฎหมาย
+          พร้อมพิมพ์ไปลงนามให้มีผลจริงตามกฎหมาย
         </p>
         <button
           type="button"
@@ -302,8 +304,8 @@ export function Home() {
             อยากเขียนด้วยปากกาแทน
           </h3>
           <p className="mt-1 text-base leading-relaxed text-ink">
-            ดาวน์โหลดแบบฟอร์มเปล่าไปปริ้น แล้วเขียนเองได้ทั้งฉบับ
-            — ไม่ต้องพิมพ์อะไรลงในเว็บเลย
+            ดาวน์โหลดแบบฟอร์มเปล่าไปสั่งพิมพ์ แล้วเขียนเองได้ทั้งฉบับ
+            — ไม่ต้องกรอกอะไรลงในเว็บเลย
           </p>
           <button
             type="button"
@@ -344,7 +346,7 @@ export function Home() {
       {/* ---- ชวนบอกต่อ ---- */}
       <section className="mt-10 text-center">
         <p className="text-lg leading-relaxed text-ink">
-          รู้จักใครที่เรื่องนี้มีความหมายกับเขา
+          รู้จักใครที่เรื่องนี้มีความหมายกับเขาไหม?
         </p>
         <div className="mt-3">
           <ShareButton />

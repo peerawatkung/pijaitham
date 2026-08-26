@@ -1,21 +1,36 @@
+import { Suspense, lazy } from 'react'
 import { FontSizeControl } from './components/FontSizeControl'
 import { InAppBrowserNotice } from './components/InAppBrowserNotice'
 import { Logo } from './components/Logo'
 import { APP_CONFIG } from './config/app'
-import { About } from './pages/About'
 import { Done } from './pages/Done'
-import { Faq } from './pages/Faq'
-import { ForDoctors } from './pages/ForDoctors'
-import { HelpParents } from './pages/HelpParents'
 import { Home } from './pages/Home'
 import { OpenCloud } from './pages/OpenCloud'
-import { Resources } from './pages/Resources'
 import { Review } from './pages/Review'
-import { Sample } from './pages/Sample'
 import { StoreChoice } from './pages/StoreChoice'
-import { TalkGuide } from './pages/TalkGuide'
 import { Wizard } from './pages/Wizard'
 import { useForm } from './state/FormContext'
+
+// หน้าเนื้อหา (ไม่อยู่ใน flow หลักของการกรอกเอกสาร) โหลดเมื่อผู้ใช้เปิดเท่านั้น —
+// ลด bundle แรกที่ต้องรอก่อนเห็นหน้าแรก; chunk เหล่านี้ยังถูก SW precache
+// อัตโนมัติ จึงใช้ออฟไลน์ได้เหมือนเดิมหลังเปิดเว็บครั้งแรก
+const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
+const Faq = lazy(() => import('./pages/Faq').then((m) => ({ default: m.Faq })))
+const ForDoctors = lazy(() =>
+  import('./pages/ForDoctors').then((m) => ({ default: m.ForDoctors })),
+)
+const HelpParents = lazy(() =>
+  import('./pages/HelpParents').then((m) => ({ default: m.HelpParents })),
+)
+const Resources = lazy(() =>
+  import('./pages/Resources').then((m) => ({ default: m.Resources })),
+)
+const Sample = lazy(() =>
+  import('./pages/Sample').then((m) => ({ default: m.Sample })),
+)
+const TalkGuide = lazy(() =>
+  import('./pages/TalkGuide').then((m) => ({ default: m.TalkGuide })),
+)
 
 function CurrentPage() {
   const { page } = useForm()
@@ -74,7 +89,15 @@ export function App() {
         )}
         <FontSizeControl />
       </header>
-      <CurrentPage />
+      <Suspense
+        fallback={
+          <p className="p-10 text-center text-lg text-ink-soft">
+            กำลังเปิดหน้า...
+          </p>
+        }
+      >
+        <CurrentPage />
+      </Suspense>
     </>
   )
 }

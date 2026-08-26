@@ -6,7 +6,7 @@ import { APP_CONFIG } from '../config/app'
  * คนที่กดจากแชท LINE จะเปิดในเบราว์เซอร์จริงทันที ไม่ติดข้อจำกัดดาวน์โหลดไฟล์
  */
 const SHARE_URL = `https://${APP_CONFIG.domain}/?openExternalBrowser=1`
-const SHARE_TEXT = `ชวนเขียน "หนังสือแสดงเจตนา" (Living Will) กับ${APP_CONFIG.name} — บอกความตั้งใจเรื่องการดูแลช่วงท้ายของชีวิตไว้ล่วงหน้า ให้คนที่เรารักไม่ต้องเดา ใช้ฟรี ไม่เก็บข้อมูลใด ๆ`
+const SHARE_TEXT = `ชวนเขียน "หนังสือแสดงเจตนา" (Living Will) กับ${APP_CONFIG.name} — บอกความตั้งใจเรื่องการดูแลช่วงท้ายของชีวิตไว้ล่วงหน้า ให้คนที่เรารักไม่ต้องเดา ใช้ฟรี ข้อมูลเป็นความลับ ไม่มีใครอ่านได้นอกจากคุณ`
 
 export function ShareButton() {
   const [copied, setCopied] = useState(false)

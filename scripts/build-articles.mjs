@@ -67,7 +67,7 @@ footer.site a{color:var(--ink-soft)}
 const CTA = `
 <div class="cta">
   <p><strong>เขียนหนังสือแสดงเจตนาของคุณเองได้ฟรี</strong><br>
-  ตอบคำถามทีละข้อ ได้เอกสารพร้อมพิมพ์ตามมาตรา 12 — ไม่เก็บข้อมูลใด ๆ ของคุณ</p>
+  ตอบคำถามทีละข้อ ได้เอกสารพร้อมพิมพ์ตามมาตรา 12 — ข้อมูลเป็นความลับ ไม่มีใครอ่านได้นอกจากคุณ</p>
   <a href="/">เริ่มเขียนที่พิใจธรรม</a>
 </div>`
 
@@ -95,7 +95,7 @@ function pageShell({ title, description, canonical, body, jsonLd }) {
 <header class="site"><a href="/"><img src="/logo.png" alt="" width="34" height="34">${BRAND}</a></header>
 ${body}
 <footer class="site">
-<p>${BRAND} · <a href="/">pijaitham.com</a> — เครื่องมือเขียนหนังสือแสดงเจตนา ฟรี ไม่เก็บข้อมูล</p>
+<p>${BRAND} · <a href="/">pijaitham.com</a> — เครื่องมือเขียนหนังสือแสดงเจตนา ฟรี ข้อมูลเป็นความลับ</p>
 <p>บทความนี้เป็นข้อมูลทั่วไป ไม่ใช่คำแนะนำทางการแพทย์หรือกฎหมาย</p>
 </footer>
 </div>

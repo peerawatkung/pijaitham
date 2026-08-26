@@ -51,7 +51,9 @@ export function Wizard({ step }: WizardProps) {
         >
           ส่วนที่ {section.number}: {section.title}
         </h1>
-        <p className="text-lg leading-relaxed text-ink-soft">{section.intro}</p>
+        <p className="whitespace-pre-line text-lg leading-relaxed text-ink-soft">
+          {section.intro}
+        </p>
         {section.preamble ? (
           <div className="rounded-xl border-2 border-tea-600 bg-tea-100 p-5">
             <p className="text-lg font-bold leading-relaxed text-ink">
@@ -83,7 +85,7 @@ export function Wizard({ step }: WizardProps) {
 
       {section.footnote ? (
         <div className="mt-8 rounded-xl border border-dawn-100 bg-dawn-100/40 p-5">
-          <p className="text-base leading-relaxed text-ink">
+          <p className="whitespace-pre-line text-base leading-relaxed text-ink">
             {section.footnote}
           </p>
         </div>
@@ -108,7 +110,7 @@ export function Wizard({ step }: WizardProps) {
 
       <p className="mt-6 text-center text-base text-ink-soft">
         ข้อไหนยังไม่พร้อมตอบ เว้นไว้ก่อนได้เสมอ —
-        ข้อที่เว้นไว้จะมีเส้นว่างในเอกสาร ให้เขียนด้วยปากกาภายหลังได้
+        ในเอกสารจะมีเส้นว่างให้เขียนด้วยปากกาภายหลัง
       </p>
     </main>
   )

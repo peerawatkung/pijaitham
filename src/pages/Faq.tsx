@@ -42,14 +42,26 @@ export function Faq() {
                 <path d="m6 9 6 6 6-9" transform="translate(0 1) scale(1 0.85)" />
               </svg>
             </summary>
-            <p className="whitespace-pre-line px-5 pb-5 text-base leading-relaxed text-ink sm:text-lg">
-              {item.a}
-            </p>
+            {/* คำตอบยาวแบ่งเป็นย่อหน้าจริงตาม \n — มีระยะห่างให้พักสายตา */}
+            <div className="space-y-3 px-5 pb-5">
+              {item.a
+                .split('\n')
+                .filter((para) => para.trim() !== '')
+                .map((para, i) => (
+                  // key ตาม index ปลอดภัย: เนื้อหา FAQ เป็น static ไม่ reorder
+                  <p
+                    key={i}
+                    className="text-base leading-relaxed text-ink sm:text-lg"
+                  >
+                    {para}
+                  </p>
+                ))}
+            </div>
           </details>
         ))}
       </div>
 
-      <p className="mt-8 text-sm leading-relaxed text-ink-soft">
+      <p className="mt-8 text-base leading-relaxed text-ink-soft">
         {FAQ_DISCLAIMER}
       </p>
 

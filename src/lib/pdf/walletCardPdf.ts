@@ -329,7 +329,7 @@ export async function generateWalletCardBytes(
   y -= 10
   y = centeredParagraph(
     page,
-    'วิธีใช้: 1) ปริ้นหน้านี้  2) ตัดตามกรอบเส้นประ  3) พับครึ่งตามเส้นกลาง ให้ตัวหนังสืออยู่ด้านนอก',
+    'วิธีใช้: 1) พิมพ์หน้านี้  2) ตัดตามกรอบเส้นประ  3) พับครึ่งตามเส้นกลาง ให้ตัวหนังสืออยู่ด้านนอก',
     y,
     { size: 10, font: regular, color: COLOR_INK },
   )

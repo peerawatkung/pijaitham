@@ -33,7 +33,11 @@ export function FieldShell({
     return (
       <fieldset className="space-y-2">
         <legend className="leading-relaxed">{heading}</legend>
-        {hint ? <p className="text-base text-ink-soft">{hint}</p> : null}
+        {hint ? (
+        <p className="whitespace-pre-line text-base leading-relaxed text-ink-soft">
+          {hint}
+        </p>
+      ) : null}
         {children}
       </fieldset>
     )
@@ -44,7 +48,11 @@ export function FieldShell({
       <label htmlFor={htmlFor} className="block leading-relaxed">
         {heading}
       </label>
-      {hint ? <p className="text-base text-ink-soft">{hint}</p> : null}
+      {hint ? (
+        <p className="whitespace-pre-line text-base leading-relaxed text-ink-soft">
+          {hint}
+        </p>
+      ) : null}
       {children}
     </div>
   )

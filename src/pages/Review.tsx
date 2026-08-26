@@ -5,7 +5,7 @@ import { formatAnswer } from '../lib/formatAnswer'
 import { useForm } from '../state/FormContext'
 
 /** ข้อความในหน้าตรวจทานสำหรับข้อที่เว้นไว้ (ใน PDF จะเป็นเส้น/ช่องติ๊กว่าง) */
-const SKIPPED_TEXT = 'เว้นว่างไว้ — มีช่องให้เขียนด้วยปากกาในเอกสาร'
+const SKIPPED_TEXT = 'เว้นว่างไว้ — ในเอกสารจะเว้นที่ให้เขียนด้วยปากกาภายหลัง'
 
 export function Review() {
   const { answers, goToStep, goHome, goToStoreChoice } = useForm()
@@ -23,7 +23,10 @@ export function Review() {
         </h1>
         <p className="text-lg leading-relaxed text-ink-soft">
           อ่านทบทวนอีกครั้งก่อนสร้างเอกสาร — แก้ไขส่วนไหนได้ทุกเมื่อ
-          ข้อที่เว้นไว้จะมีเส้นและช่องติ๊กว่างในเอกสาร ให้เขียนด้วยปากกาได้
+        </p>
+        <p className="text-lg leading-relaxed text-ink-soft">
+          ข้อที่เว้นไว้จะมีเส้นและช่องติ๊กว่างในเอกสาร
+          ให้เขียนด้วยปากกาภายหลังได้
         </p>
       </header>
 

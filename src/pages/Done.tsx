@@ -71,9 +71,10 @@ export function Done() {
         เอกสารของคุณพร้อมแล้ว
       </h1>
       <p className="mt-3 text-lg leading-relaxed text-ink-soft">
-        การเขียนถึงตรงนี้คือก้าวที่มีความหมายมาก —
-        ไม่ว่าคุณจะเก็บเป็นไฟล์ในเครื่องเพื่อพิมพ์เป็นกระดาษ
-        หรือเก็บออนไลน์ไว้เปิดได้ทุกที่
+        การเขียนมาถึงตรงนี้คือก้าวที่มีความหมายมาก
+      </p>
+      <p className="mt-2 text-lg leading-relaxed text-ink-soft">
+        ไม่ว่าคุณจะเก็บเป็นไฟล์ พิมพ์เป็นกระดาษ หรือเก็บออนไลน์ —
         ขั้นตอนต่อจากนี้จะทำให้เจตนาของคุณมีผลจริง
       </p>
 
@@ -136,12 +137,15 @@ export function Done() {
         </button>
       </p>
 
-      <div className="mt-8 rounded-xl border border-dawn-100 bg-dawn-100/40 p-5">
+      <div className="mt-8 space-y-2 rounded-xl border border-dawn-100 bg-dawn-100/40 p-5">
         <p className="text-base leading-relaxed text-ink">
-          แนะนำให้ทบทวนเอกสารทุก 1 ปี หรือเมื่อสุขภาพหรือชีวิตเปลี่ยนแปลงสำคัญ
-          — หากจัดทำฉบับใหม่ ฉบับที่มีวันที่ล่าสุดจะมีผลเหนือฉบับเก่า
-          เก็บออนไลน์ไว้ (อีเมล + รหัสผ่าน)
-          จะช่วยให้กลับมาแก้ไขได้โดยไม่ต้องเริ่มใหม่
+          แนะนำให้ทบทวนเอกสารทุก 1 ปี
+          หรือเมื่อสุขภาพหรือชีวิตเปลี่ยนแปลงครั้งใหญ่ — หากจัดทำฉบับใหม่
+          ฉบับที่ลงวันที่ล่าสุดจะมีผลเหนือฉบับเก่า
+        </p>
+        <p className="text-base leading-relaxed text-ink">
+          ถ้าเก็บออนไลน์ไว้ (อีเมล + รหัสผ่าน)
+          จะกลับมาแก้ไขได้โดยไม่ต้องเริ่มใหม่
         </p>
       </div>
 
@@ -157,7 +161,7 @@ export function Done() {
           className="w-full rounded-xl border border-tea-200 px-8 py-4 text-xl text-ink transition-colors hover:bg-tea-100 focus:outline-none focus:ring-4 focus:ring-tea-600/30 disabled:cursor-wait disabled:opacity-60"
           onClick={() => void download()}
         >
-          {generating ? 'กำลังสร้างเอกสาร...' : 'ดาวน์โหลด PDF อีกครั้ง'}
+          {generating ? 'กำลังสร้างเอกสาร...' : 'ดาวน์โหลดเอกสารฉบับเต็ม (PDF)'}
         </button>
         {error ? (
           <p role="alert" className="text-center text-lg text-red-700">
@@ -174,7 +178,7 @@ export function Done() {
             ? 'กำลังสร้างการ์ด...'
             : 'ดาวน์โหลดการ์ดพกกระเป๋า (PDF)'}
         </button>
-        <p className="text-center text-sm leading-relaxed text-ink-soft">
+        <p className="mx-auto max-w-md text-base leading-relaxed text-ink-soft">
           การ์ดขนาดบัตร บอกว่าคุณมีหนังสือแสดงเจตนา เก็บไว้ที่ไหน และติดต่อใคร
           — ตัด พับ ใส่กระเป๋าเงิน มีประโยชน์ยามฉุกเฉินที่เอกสารตัวเต็มไม่ได้อยู่กับตัว
         </p>
@@ -193,7 +197,7 @@ export function Done() {
             ? 'กำลังสร้างใบปะหน้า...'
             : 'ดาวน์โหลดใบปะหน้าฝากเวชระเบียน (PDF)'}
         </button>
-        <p className="text-center text-sm leading-relaxed text-ink-soft">
+        <p className="mx-auto max-w-md text-base leading-relaxed text-ink-soft">
           จดหมายนำส่งสั้น ๆ ยื่นพร้อมสำเนาที่งานเวชระเบียนโรงพยาบาลที่รักษาประจำ
           — ช่วยให้ขั้นตอนมอบสำเนา (ข้อ 3) ง่ายขึ้นมาก
         </p>
@@ -209,7 +213,7 @@ export function Done() {
         >
           เพิ่มการเตือนทบทวนในปฏิทิน (ปีละครั้ง)
         </button>
-        <p className="text-center text-sm leading-relaxed text-ink-soft">
+        <p className="mx-auto max-w-md text-base leading-relaxed text-ink-soft">
           ได้ไฟล์ปฏิทิน (.ics) เปิดแล้วเพิ่มลง Google Calendar หรือปฏิทินมือถือได้ทันที
           — จะเตือนให้กลับมาทบทวนเอกสารทุกปี โดยไม่มีการเชื่อมต่อบัญชีใด ๆ
         </p>

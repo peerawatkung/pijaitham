@@ -30,7 +30,9 @@ export function CheckboxField({ field, value, onChange }: CheckboxFieldProps) {
         <span className="text-lg font-bold text-ink">{field.label}</span>
       </label>
       {field.hint ? (
-        <p className="text-base text-ink-soft">{field.hint}</p>
+        <p className="whitespace-pre-line text-base leading-relaxed text-ink-soft">
+          {field.hint}
+        </p>
       ) : null}
     </div>
   )
